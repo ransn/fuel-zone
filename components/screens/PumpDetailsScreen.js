@@ -2,8 +2,7 @@ import React, {useState} from 'react';
 import { View, Image, useColorScheme, ScrollView, StyleSheet } from 'react-native';
 import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Card, ListItem, Avatar, Divider, Button, Text, Overlay, Input, ButtonGroup } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Card, ListItem, Avatar, Divider, Button, Text, Overlay, Input, ButtonGroup, Icon } from 'react-native-elements';
 
 function PumpDetailsScreen({ navigation }) {
   const [visible, setVisible] = useState(false);
@@ -41,7 +40,7 @@ function PumpDetailsScreen({ navigation }) {
       
       <View style={{flex:1, flexDirection: 'row'}}>
         <Text style={{flex:0.9, padding: 10, fontSize:20, fontWeight:'bold' }}>Reading:</Text>
-        <Button icon={{name: "edit", size: 20, color: "dodgerblue"}} type= 'clear'  onPress={toggleOverlay}/>
+        <Button icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} type= 'clear'  onPress={toggleOverlay}/>
         <Overlay overlayStyle={{height: 250, width: 350, borderRadius: 10}} isVisible={visible} onBackdropPress={toggleOverlay} supportedOrientations={['portrait', 'landscape']}>
           <ScrollView style={{flex: 1}}>
             <Text style={{flex:0.9, padding: 5, fontSize:15, fontWeight:'bold' }}>Petrol Reading:</Text>
@@ -153,7 +152,7 @@ function PumpDetailsScreen({ navigation }) {
       <View>
         <View style={{flex:1, flexDirection: 'row'}}>
           <Text style={{flex:0.9, padding: 10, fontSize:20, fontWeight:'bold' }}>Oils:</Text>
-          <Button type= 'clear' icon={{name: "edit", size: 20, color: "dodgerblue"}} onPress={toggleOverlayOils} />
+          <Button type= 'clear' icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} onPress={toggleOverlayOils} />
           <Overlay overlayStyle={{height: 150, width: 250, borderRadius: 10}} isVisible={visibleOils} onBackdropPress={toggleOverlayOils} supportedOrientations={['portrait', 'landscape']}>
             <ScrollView style={{flex: 1}}>
               <Text style={{flex:0.9, padding: 5, fontSize:15, fontWeight:'bold' }}>Oil Packets:</Text>
@@ -198,7 +197,7 @@ function PumpDetailsScreen({ navigation }) {
         <View style={{flex:1}}>
           <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
             <Text style={{ padding: 10, fontSize:15, fontWeight:'bold' }}>Safedrops</Text>
-            <Button icon={{name: "edit", size: 20, color: "dodgerblue"}} type='clear' onPress={toggleSafeDropsOverlay} />
+            <Button icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} type='clear' onPress={toggleSafeDropsOverlay} />
             <Overlay overlayStyle={{height: 150, width: 250, borderRadius: 10}} isVisible={safeDropsOverlayVisible} onBackdropPress={toggleSafeDropsOverlay} supportedOrientations={['portrait', 'landscape']}>
               <ScrollView style={{flex: 1}}>
                 <Text style={{flex:0.9, padding: 5, fontSize:15, fontWeight:'bold' }}>Safedrops:</Text>
@@ -232,7 +231,7 @@ function PumpDetailsScreen({ navigation }) {
         <View style={{flex:1}}>
           <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
             <Text style={{padding: 10, fontSize:15, fontWeight:'bold' }}>Lastcash</Text>
-            <Button icon={{name: "edit", size: 20, color: "dodgerblue"}} type='clear' onPress={toggleLastCashOverlay}/>
+            <Button icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} type='clear' onPress={toggleLastCashOverlay}/>
             <Overlay overlayStyle={{height: 200, width: 350, borderRadius: 10}} isVisible={lastCashOverlayVisible} onBackdropPress={toggleLastCashOverlay} supportedOrientations={['portrait', 'landscape']}>
               <ScrollView style={{flex: 1}}>
                 <Text style={{flex:0.9, padding: 5, fontSize:15, fontWeight:'bold' }}>Lastcash:</Text>

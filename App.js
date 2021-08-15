@@ -7,16 +7,32 @@ import HomeScreen  from "./components/screens/HomeScreen";
 import StaffStack  from "./components/screens/StaffStack";
 import PumpStack from "./components/screens/PumpStack";
 import SettingsScreen from "./components/screens/SettingsScreen";
-//const RootStack = createNativeStackNavigator();
+import Ionicons from 'react-native-vector-icons/Ionicons';
 const Tab = createBottomTabNavigator();
 function App() {
   const scheme = useColorScheme();
   return (
     <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Tab.Navigator initialRouteName="Dashboard">
-        <Tab.Screen name="Dashboard" component={HomeScreen}/>
-        <Tab.Screen name="Pump" component={PumpStack} options={{ tabBarLabel: 'Pumps', headerShown: false }}/>
-        <Tab.Screen name="Settings" component={SettingsScreen} />
+        <Tab.Screen name="Dashboard" component={HomeScreen} options={{
+          tabBarLabel: 'Home', tabBarIcon: () => (
+            <Ionicons name="home-outline" size={20} />
+          )
+        }}/>
+        <Tab.Screen name="Pump" component={PumpStack} options={{ 
+          tabBarLabel: 'Pumps', 
+          headerShown: false,
+          tabBarIcon: () => (
+            <Ionicons name="water-outline" size={20} />
+          ) 
+        }}/>
+        <Tab.Screen name="Settings" component={SettingsScreen} options={{ 
+          tabBarLabel: 'Settings', 
+          headerShown: false, 
+          tabBarIcon: () => (
+            <Ionicons name="settings-outline" size={20} />
+          ) 
+        }}/>
     </Tab.Navigator>
     </NavigationContainer>
   );
