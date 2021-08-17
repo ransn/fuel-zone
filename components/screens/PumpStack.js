@@ -6,7 +6,7 @@ const StaffScreensStack = createNativeStackNavigator();
 
 function PumpStack() {
      return (
-      <StaffScreensStack.Navigator>
+      <StaffScreensStack.Navigator initialRouteName="PumpList">
         <StaffScreensStack.Screen name="PumpList" component={PumpScreen} options={{title: 'Pumps'}}/>
         <StaffScreensStack.Screen name="PumpDetails" component={PumpDetailsScreen} options={{title: 'Pump1'}}/>
       </StaffScreensStack.Navigator>

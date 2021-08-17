@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen  from "./components/screens/HomeScreen";
 import StaffStack  from "./components/screens/StaffStack";
 import PumpStack from "./components/screens/PumpStack";
+import CreditStack from "./components/screens/CreditStack";
 import SettingsScreen from "./components/screens/SettingsScreen";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 const Tab = createBottomTabNavigator();
@@ -24,6 +25,13 @@ function App() {
           headerShown: false,
           tabBarIcon: () => (
             <Ionicons name="water-outline" size={20} />
+          ) 
+        }}/>
+        <Tab.Screen name="Credit" component={CreditStack} options={{ 
+          tabBarLabel: 'Credits', 
+          headerShown: false,
+          tabBarIcon: () => (
+            <Ionicons name="card-outline" size={20} />
           ) 
         }}/>
         <Tab.Screen name="Settings" component={SettingsScreen} options={{ 
