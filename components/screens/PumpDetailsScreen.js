@@ -51,7 +51,7 @@ function PumpDetailsScreen({ navigation }) {
       <View style={{flex:1, flexDirection: 'row'}}>
         <Text style={{flex:0.9, padding: 10, fontSize:20, fontWeight:'bold' }}>Reading:</Text>
         <Button icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} type= 'clear'  onPress={toggleOverlay}/>
-        <Overlay overlayStyle={{height: 260, width: 350, borderRadius: 10}} isVisible={visible} onBackdropPress={toggleOverlay} supportedOrientations={['portrait', 'landscape']}>
+        <Overlay overlayStyle={{height: 280, width: 350, borderRadius: 10}} isVisible={visible} onBackdropPress={toggleOverlay} supportedOrientations={['portrait', 'landscape']}>
           <ScrollView style={{flex: 1}}>
             <Text style={{flex:0.9, padding: 10, fontSize:15, fontWeight:'bold' }}>Reading:</Text>
             <View style={{flex: 1, flexDirection: 'row'}}>
@@ -173,7 +173,7 @@ function PumpDetailsScreen({ navigation }) {
         <View style={{flex:1, flexDirection: 'row'}}>
           <Text style={{flex:0.9, padding: 10, fontSize:20, fontWeight:'bold' }}>Oils:</Text>
           <Button type= 'clear' icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} onPress={toggleOverlayOils} />
-          <Overlay overlayStyle={{height: 150, width: 250, borderRadius: 10}} isVisible={visibleOils} onBackdropPress={toggleOverlayOils} supportedOrientations={['portrait', 'landscape']}>
+          <Overlay overlayStyle={{height: 180, width: 250, borderRadius: 10}} isVisible={visibleOils} onBackdropPress={toggleOverlayOils} supportedOrientations={['portrait', 'landscape']}>
             <ScrollView style={{flex: 1}}>
               <Text style={{flex:0.9, padding: 10, fontSize:15, fontWeight:'bold' }}>Oil Packets:</Text>
               <View style={{flex: 1, flexDirection: 'row'}}>
@@ -218,7 +218,7 @@ function PumpDetailsScreen({ navigation }) {
           <View style={{flexDirection: 'row', alignItems:'flex-start'}}>
             <Text style={{ padding: 10, fontSize:15, fontWeight:'bold' }}>Safedrops</Text>
             <Button icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} type='clear' onPress={toggleSafeDropsOverlay} />
-            <Overlay overlayStyle={{height: 150, width: 250, borderRadius: 10}} isVisible={safeDropsOverlayVisible} onBackdropPress={toggleSafeDropsOverlay} supportedOrientations={['portrait', 'landscape']}>
+            <Overlay overlayStyle={{height: 180, width: 250, borderRadius: 10}} isVisible={safeDropsOverlayVisible} onBackdropPress={toggleSafeDropsOverlay} supportedOrientations={['portrait', 'landscape']}>
               <ScrollView style={{flex: 1}}>
                 <Text style={{flex:0.9, padding: 10, fontSize:15, fontWeight:'bold' }}>Safedrops:</Text>
                 <View style={{flex: 1, flexDirection: 'row'}}>

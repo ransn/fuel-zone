@@ -37,9 +37,11 @@ function CreditScreen({ navigation }) {
   {
     list.map((l, i) => (
       <ListItem key={i} bottomDivider onPress={()=>{
-        navigation.navigate('CreditDetails')
+        navigation.navigate('CreditDetails', {
+          credit: l
+        })
       }}>
-        <Avatar rounded source={{uri: "foo.jpg"}} icon={{name: 'person', type: 'ionicon'}}/>
+        <Avatar rounded source={require('../../images/user.png')} icon={{name: 'person', type: 'ionicon'}}/>
         <ListItem.Content>
           <ListItem.Title>{l.name}</ListItem.Title>
           <ListItem.Subtitle>Balance: {l.subtitle}</ListItem.Subtitle>
