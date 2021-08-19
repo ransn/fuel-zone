@@ -17,11 +17,12 @@ const list = [
   },
   {
     title: 'Active/Inactive Pumps',
-    icon: 'flight-takeoff'
+    icon: 'rupee',
+    subtitle: 'pump 4'
   },
   {
     title: 'Load/Unload Fuel',
-    icon: 'flight-takeoff'
+    icon: 'rupee'
   }
 ]
 function SettingsScreen({ navigation }) {

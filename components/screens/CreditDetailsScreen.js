@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { View, Image, useColorScheme, ScrollView } from 'react-native';
 import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Card, ListItem, Avatar, Divider, Icon, Button, Text, Overlay, Input } from 'react-native-elements';
+import { ListItem, Avatar, Divider, Icon, Button, Text, Overlay, Input } from 'react-native-elements';
 
 var list = [
   {
