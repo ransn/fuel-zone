@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Image, useColorScheme, ScrollView, StyleSheet } from 'react-native';
 import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Card, ListItem, Avatar, Divider, Button, Text, Overlay, Input, ButtonGroup, Icon } from 'react-native-elements';
 
-function PumpDetailsScreen({ navigation }) {
+function PumpDetailsScreen({ route, navigation }) {
+  const {pump} = route.params;
   const [visible, setVisible] = useState(false);
   const [visibleOils, setVisibleOils] = useState(false);
   const [safeDropsOverlayVisible, setSafeDropsOverlayVisible] = useState(false);
@@ -12,6 +13,10 @@ function PumpDetailsScreen({ navigation }) {
   const [ugtOverlayVisible, setUgtOverlayVisible] = useState(false);
   const [calculateOverlayVisible, setCalculateOverlayVisible] = useState(false);
   const [index, setIndex] = useState(0);
+
+  useEffect(()=>{
+    navigation.setOptions({title:pump.name})
+  })
   const toggleOverlay = () => {
     setVisible(!visible);
   };

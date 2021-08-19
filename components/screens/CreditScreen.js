@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Button, View, Text, useColorScheme } from 'react-native';
 import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { ListItem, Avatar, Divider, Icon } from 'react-native-elements';
+import { ListItem, Avatar, Divider, Icon, SearchBar } from 'react-native-elements';
 
 const list = [
   {
@@ -32,8 +32,26 @@ const list = [
   }
 ]
 function CreditScreen({ navigation }) {
+  const [search, setSearch] = useState('');
+  updateSearch = (search) => {
+    setSearch(search);
+  }
   return (
     <View>
+    <View style={{flexDirection:'row'}}>
+      <View style={{flex:3.5}}>
+      <SearchBar
+        placeholder="Type Here..."
+        onChangeText={updateSearch}
+        value={search}
+        lightTheme = 'false'
+        round = 'true'
+      />
+      </View>
+      <View style={{flex: 1, paddingTop: 10}}>
+        <Button title='Add' type='clear' onPress={() => alert('Add credit!')} />
+      </View>
+    </View>
   {
     list.map((l, i) => (
       <ListItem key={i} bottomDivider onPress={()=>{

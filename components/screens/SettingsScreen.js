@@ -1,17 +1,45 @@
 import React from 'react';
-import { Button, View, Text, useColorScheme } from 'react-native';
-import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { ListItem, Icon } from 'react-native-elements'
+import { Button, View, Text } from 'react-native';
 
+const list = [
+  {
+    title: 'Set Fuel Prize',
+    icon: 'rupee',
+    subtitle: 'petrol: 105.25, diesel: 103.23',
+    navigateTo: 'FuelPrize'
+  },
+  {
+    title: 'Set Oil Prize',
+    icon: 'rupee',
+    subtitle: 'oil: 20',
+    navigateTo: 'OilPrize'
+  },
+  {
+    title: 'Active/Inactive Pumps',
+    icon: 'flight-takeoff'
+  },
+  {
+    title: 'Load/Unload Fuel',
+    icon: 'flight-takeoff'
+  }
+]
 function SettingsScreen({ navigation }) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>SettingsScreen List</Text>
-      <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate('Details')}
-      />
-    </View>
+    <View>
+  {
+    list.map((item, i) => (
+      <ListItem key={i} bottomDivider onPress={ () => {navigation.navigate(item.navigateTo)}}>
+        <Icon name={item.icon}   type='font-awesome'/>
+        <ListItem.Content>
+          <ListItem.Title>{item.title}</ListItem.Title>
+          <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle>
+        </ListItem.Content>
+        <ListItem.Chevron />
+      </ListItem>
+    ))
+  }
+</View>
   );
 }
 

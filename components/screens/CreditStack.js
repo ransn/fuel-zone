@@ -8,13 +8,8 @@ const StaffScreensStack = createNativeStackNavigator();
 function CreditStack() {
      return (
       <StaffScreensStack.Navigator>
-        <StaffScreensStack.Screen name="CreditList" component={CreditScreen} options={{title: 'Credits', headerRight: () => (
-            <Button type='clear'
-              onPress={() => alert('This is a button!')}
-              title="Add"
-            />
-          )}}/>
-        <StaffScreensStack.Screen name="CreditDetails" component={CreditDetailsScreen} options={({ route }) => ({ title: route.params.name })}/>
+        <StaffScreensStack.Screen name="CreditList" component={CreditScreen} options={{title: 'Credits'}}/>
+        <StaffScreensStack.Screen name="CreditDetails" component={CreditDetailsScreen}/>
       </StaffScreensStack.Navigator>
   );
 }

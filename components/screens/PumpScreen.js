@@ -27,7 +27,7 @@ function PumpScreen({ navigation }) {
     <View>
   {
     list.map((l, i) => (
-      <ListItem key={i} bottomDivider onPress={() => navigation.navigate('PumpDetails')}>
+      <ListItem key={i} bottomDivider onPress={() => navigation.navigate('PumpDetails', {pump: l})}>
         <Avatar rounded source={require('../../images/pump.png')} />
         <ListItem.Content>
           <ListItem.Title>{l.name}</ListItem.Title>

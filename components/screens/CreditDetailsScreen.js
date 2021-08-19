@@ -89,7 +89,7 @@ function CreditDetailsScreen({ route, navigation }) {
     setVisible(!visible);
   };
   useEffect(() => {
-    navigation.setOptions({ title: credit.name });
+    navigation.setOptions({ title: credit.name});
   });
   
   return (

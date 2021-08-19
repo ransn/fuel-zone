@@ -7,7 +7,7 @@ import HomeScreen  from "./components/screens/HomeScreen";
 import StaffStack  from "./components/screens/StaffStack";
 import PumpStack from "./components/screens/PumpStack";
 import CreditStack from "./components/screens/CreditStack";
-import SettingsScreen from "./components/screens/SettingsScreen";
+import SettingsStack from "./components/screens/SettingsStack";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 const Tab = createBottomTabNavigator();
 function App() {
@@ -34,7 +34,7 @@ function App() {
             <Ionicons name="card-outline" size={20} />
           ) 
         }}/>
-        <Tab.Screen name="Settings" component={SettingsScreen} options={{ 
+        <Tab.Screen name="SettingsStack" component={SettingsStack} options={{ 
           tabBarLabel: 'Settings', 
           headerShown: false, 
           tabBarIcon: () => (
