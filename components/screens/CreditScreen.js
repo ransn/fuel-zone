@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
-import { Button, View, Text, useColorScheme } from 'react-native';
-import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { ListItem, Avatar, Divider, Icon, SearchBar } from 'react-native-elements';
+import { View, Text, ScrollView } from 'react-native';
+import { ListItem, Avatar, Divider, Icon, SearchBar, Button, Overlay, Input } from 'react-native-elements';
 
 const list = [
   {
@@ -33,9 +31,14 @@ const list = [
 ]
 function CreditScreen({ navigation }) {
   const [search, setSearch] = useState('');
+  const [visibleForm, setVisibleForm] = useState(false);
+
   updateSearch = (search) => {
     setSearch(search);
   }
+  const toggleAddCreditUserOverlay = () => {
+    setVisibleForm(!visibleForm);
+  };
   return (
     <View>
     <View style={{flexDirection:'row'}}>
@@ -49,7 +52,15 @@ function CreditScreen({ navigation }) {
       />
       </View>
       <View style={{flex: 1, paddingTop: 10}}>
-        <Button title='Add' type='clear' onPress={() => alert('Add credit!')} />
+        <Button icon={{name: 'add-circle', type:'ionicon', size: 30, color: "dodgerblue"}} type='clear' onPress={toggleAddCreditUserOverlay}/>
+        <Overlay overlayStyle={{height: 280, width: 350, borderRadius: 10}} isVisible={visibleForm} onBackdropPress={toggleAddCreditUserOverlay} supportedOrientations={['portrait', 'landscape']}>
+          <ScrollView style={{flex: 1}}>
+            <Text style={{flex:0.9, padding: 10, fontSize:15, fontWeight:'bold' }}>Add:</Text>
+            <Input label='Name'/>
+            <Input label='Mobile'/>
+            <Button title='Add' onPress={toggleAddCreditUserOverlay}/>
+          </ScrollView>
+        </Overlay>
       </View>
     </View>
   {

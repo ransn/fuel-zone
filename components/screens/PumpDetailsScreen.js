@@ -1,8 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import { View, Image, useColorScheme, ScrollView, StyleSheet } from 'react-native';
-import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { ListItem, Avatar, Divider, Button, Text, Overlay, Input, ButtonGroup, Icon } from 'react-native-elements';
+import { View, Image, ScrollView } from 'react-native';
+import { ListItem, Divider, Button, Text, Overlay, Input, ButtonGroup, Icon } from 'react-native-elements';
 
 function PumpDetailsScreen({ route, navigation }) {
   const {pump} = route.params;

@@ -1,7 +1,5 @@
 import React from 'react';
-import { Button, View, Text, useColorScheme } from 'react-native';
-import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { View, Text } from 'react-native';
 import { ListItem, Avatar, Divider } from 'react-native-elements';
 
 const list = [

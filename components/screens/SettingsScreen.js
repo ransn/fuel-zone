@@ -18,11 +18,13 @@ const list = [
   {
     title: 'Active/Inactive Pumps',
     icon: 'rupee',
-    subtitle: 'pump 4'
+    subtitle: 'pump 4',
+    navigateTo: 'PumpSettings'
   },
   {
     title: 'Load/Unload Fuel',
-    icon: 'rupee'
+    icon: 'rupee',
+    navigateTo: 'FuelLoadUnload'
   }
 ]
 function SettingsScreen({ navigation }) {

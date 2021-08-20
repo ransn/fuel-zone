@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
 import { View } from 'react-native';
-import { Card, ListItem, Avatar, Divider, Icon, Button, Text, Overlay, Input } from 'react-native-elements';
+import { Card, Divider, Button, Text, Overlay, Input } from 'react-native-elements';
 
 function OilPrizeScreen({navigation}){
     const [oilPrize, setOilPrize] = useState('20');
     const savePrize = () => {
         console.log(oilPrize);
+        navigation.navigate('Settings');
     }
     return(
         <View>
