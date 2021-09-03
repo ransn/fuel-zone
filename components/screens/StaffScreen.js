@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, View, Text, useColorScheme } from 'react-native';
 import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { ListItem, Avatar, Divider } from 'react-native-elements';
+import { ListItem, Avatar, Divider, CheckBox } from 'react-native-elements';
 
 const list = [
   {
@@ -36,7 +36,7 @@ function StaffScreen({ navigation }) {
     <View>
   {
     list.map((l, i) => (
-      <ListItem key={i} bottomDivider>
+      <ListItem key={i} bottomDivider onPress={() => navigation.navigate('StaffDetails')}>
         <Avatar rounded source={{uri: l.avatar_url}} />
         <ListItem.Content>
           <ListItem.Title>{l.name}</ListItem.Title>
@@ -46,10 +46,6 @@ function StaffScreen({ navigation }) {
       </ListItem>
     ))
   }
-  <Button
-        title="Go to Staff Details"
-        onPress={() => navigation.navigate('StaffDetails')}
-      />
 </View>
   );
 }

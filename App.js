@@ -27,6 +27,13 @@ function App() {
             <Ionicons name="water-outline" size={20} />
           ) 
         }}/>
+        <Tab.Screen name="Staff" component={StaffStack} options={{ 
+          tabBarLabel: 'Staffs', 
+          headerShown: false,
+          tabBarIcon: () => (
+            <Ionicons name="person-outline" size={20} />
+          ) 
+        }}/>
         <Tab.Screen name="Credit" component={CreditStack} options={{ 
           tabBarLabel: 'Credits', 
           headerShown: false,

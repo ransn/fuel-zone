@@ -7,7 +7,7 @@ const StaffScreensStack = createNativeStackNavigator();
 function StaffStack() {
      return (
       <StaffScreensStack.Navigator>
-        <StaffScreensStack.Screen name="StaffList" component={StaffScreen} options={{title: 'Pumps'}}/>
+        <StaffScreensStack.Screen name="StaffList" component={StaffScreen} options={{title: 'Staffs'}}/>
         <StaffScreensStack.Screen name="StaffDetails" component={StaffDetailsScreen} options={{title: 'Pump 1'}}/>
       </StaffScreensStack.Navigator>
   );

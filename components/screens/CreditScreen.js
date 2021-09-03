@@ -5,27 +5,27 @@ import { ListItem, Avatar, Divider, Icon, SearchBar, Button, Overlay, Input } fr
 const list = [
   {
     name: 'Amy Farha',
-    avatar_url: 'https://i.imgur.com//ee89Mrg.jpg',
+    mobile: '9978645342',
     subtitle: '5500'
   },
   {
     name: 'Chris Jackson',
-    avatar_url: 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg',
+    mobile: '9978645342',
     subtitle: '3456'
   },
   {
     name: 'Amy Farha',
-    avatar_url: 'https://i.imgur.com//ee89Mrg.jpg',
+    mobile: '9978645342',
     subtitle: '12345'
   },
   {
     name: 'Chris Jackson',
-    avatar_url: 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg',
+    mobile: '9978645342',
     subtitle: '10000'
   },
   {
     name: 'Amy Farha',
-    avatar_url: 'https://i.imgur.com//ee89Mrg.jpg',
+    mobile: '9978645342',
     subtitle: '12000'
   }
 ]
@@ -74,6 +74,7 @@ function CreditScreen({ navigation }) {
         <ListItem.Content>
           <ListItem.Title>{l.name}</ListItem.Title>
           <ListItem.Subtitle>Balance: {l.subtitle}</ListItem.Subtitle>
+          <ListItem.Subtitle>Mobile: {l.mobile}</ListItem.Subtitle>
         </ListItem.Content>
         <ListItem.Chevron />
       </ListItem>

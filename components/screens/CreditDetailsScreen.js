@@ -32,75 +32,41 @@ var list = [
     date: '10/7/2021',
     liters: 10,
     amount: '1050'
-  },
-  {
-    date: '11/7/2021',
-    liters: 11,
-    amount: '1050'
-  },
-  {
-    date: '12/7/2021',
-    liters: 12,
-    amount: '1050'
-  },
-  {
-    date: '13/7/2021',
-    liters: 13,
-    amount: '1050'
-  },
-  {
-    date: '14/7/2021',
-    liters: 14,
-    amount: '1050'
-  },
-  {
-    date: '10/7/2021',
-    liters: 10,
-    amount: '1050'
-  },
-  {
-    date: '11/7/2021',
-    liters: 11,
-    amount: '1050'
-  },
-  {
-    date: '12/7/2021',
-    liters: 12,
-    amount: '1050'
-  },
-  {
-    date: '13/7/2021',
-    liters: 13,
-    amount: '1050'
-  },
-  {
-    date: '14/7/2021',
-    liters: 14,
-    amount: '1050'
   }
 ]
 
 function CreditDetailsScreen({ route, navigation }) {
   const {credit} = route.params;
   const [visible, setVisible] = useState(false);
+  const [visibleEditOverlay, setVisibleEditOverlay] = useState(false);
   const toggleOverlay = () => {
     setVisible(!visible);
   };
+  const toggleEditCreditUserOverlay = () => {
+    setVisibleEditOverlay(!visibleEditOverlay);
+  };
+
   useEffect(() => {
     navigation.setOptions({ title: credit.name});
   });
   
   return (
     <ScrollView>
-    <View style={{flex:1, alignItems:'center', padding:10}}>
-      <Text h4 style={{fontWeight: 'bold'}}>Credit Details</Text>
-    </View>
     <Divider />
     <View style={{flex:1, flexDirection: 'row', padding:10}}>
-        <View style={{flex:1, alignItems:'flex-start'}}>
+        <View style={{flex:2.5, alignItems:'flex-start'}}>
           <Text style={{ paddingTop:10, fontSize:20, fontWeight:'bold' }}>Balance: {credit.subtitle}</Text>
         </View>
-        <View style={{flex:1, alignItems:'flex-end'}}>
+        <View style={{flex:1, flexDirection: 'row', alignItems:'flex-end'}}>
+          <Button icon={{name: "create", type:'ionicon', size: 30, color: "dodgerblue"}} type='clear' onPress={toggleEditCreditUserOverlay}/>
+          <Overlay overlayStyle={{height: 280, width: 350, borderRadius: 10}} isVisible={visibleEditOverlay} onBackdropPress={toggleEditCreditUserOverlay} supportedOrientations={['portrait', 'landscape']}>
+            <ScrollView style={{flex: 1}}>
+              <Text style={{flex:0.9, padding: 10, fontSize:15, fontWeight:'bold' }}>Edit:</Text>
+              <Input label='Name' value={credit.name}/>
+              <Input label='Mobile' value={credit.mobile}/>
+              <Button title='Save' onPress={toggleEditCreditUserOverlay}/>
+            </ScrollView>
+          </Overlay>
           <Button icon={{name: 'add-circle', type:'ionicon', size: 30, color: "dodgerblue"}} type='clear' onPress={toggleOverlay}/>
           <Overlay overlayStyle={{height: 200, width: 350, borderRadius: 10}} isVisible={visible} onBackdropPress={toggleOverlay} supportedOrientations={['portrait', 'landscape']}>
           <ScrollView style={{flex: 1}}>
@@ -127,12 +93,13 @@ function CreditDetailsScreen({ route, navigation }) {
         </ListItem.Content>
         <Button icon={{name: 'trash', type:'ionicon', size: 20, color: "dodgerblue"}} type='clear' onPress={() => {
           console.log(i);
-          // var item = list.splice(i,1);
-          // console.log(item.liters);
         }}/>
       </ListItem>
     ))
     }
+    <View style={{padding:10}}>
+      <Button title='Delete Account'/>
+    </View>
     </ScrollView>
   );
 }
