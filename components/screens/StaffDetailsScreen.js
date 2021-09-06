@@ -1,19 +1,47 @@
 import React, {useState} from 'react';
-import { View, Image, useColorScheme, ScrollView } from 'react-native';
-import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Card, ListItem, Avatar, Divider, Icon, Button, Text, Input, Overlay } from 'react-native-elements';
+import { View, Image, ScrollView } from 'react-native';
+import { Card, Divider, Button, Text, Overlay } from 'react-native-elements';
 import ReportComponent from "./ReportComponent";
-import AssignPumpComponent from "./AssignPumpComponent";
+import AssignPumpOverlay from "./AssignPumpOverlay";
+import ReadingOverlay from "./ReadingOverlay";
+import OilCountOverlay from "./OilCountOverlay";
+import SafedropCountOverlay from "./SafedropCountOverlay";
+import LastDropOverlay from "./LastDropOverlay";
+
 function StaffDetailsScreen({ navigation }) {
   const [enableStartWork, setEnableStartWork] = useState(true);
   const [enableEndWork, setEnableEndWork] = useState(false);
   const [enableTotal, setEnableTotal] = useState(false);
-  const [safeDropsOverlayVisible, setSafeDropsOverlayVisible] = useState(false);
-  const [lastCashOverlayVisible, setLastCashOverlayVisible] = useState(false);
   const [calculateOverlayVisible, setCalculateOverlayVisible] = useState(false);
-  const [assignOverlayVisible, setAssignOverlayVisible] = useState(false);
   const [pump, setPump] = useState('');
+  const [petrolOpening, setPetrolOpening] = useState(0);
+  const [dieselOpening, setDieselOpening] = useState(0);
+  const [petrolClosing, setPetrolClosing] = useState(0);
+  const [dieselClosing, setDieselClosing] = useState(0);
+  const [packetCount, setPacketCount] = useState(0);
+  const [packetAmount, setPacketAmount] = useState(0);
+  const [safeDropCount, setSafeDropCount] = useState(0);
+  const [safeDropAmount, setSafeDropAmount] = useState(0);
+  const [lastDrop, setLastDrop] = useState({
+    lastCash: parseInt(0),
+    card: parseInt(0),
+    upi: parseInt(0),
+    credit: parseInt(0)
+  });
+  const [report, setReport] = useState({
+    petrolLiters: parseInt(0),
+    dieselLiters: parseInt(0),
+    oilPackets: parseInt(0),
+    oilAmount: parseInt(0),
+    safeDropCount: parseInt(0),
+    safeDropAmount: parseInt(0),
+    lastDrop: {}
+  })
+  
+  const PETROL = 'Petrol';
+  const DIESEL = 'Diesel';
+  const OPENING_READING = 'Opening';
+  const CLOSING_READING = 'Closing';
 
   const saveOpeningReading = () => {
     // Here we need to save opening reading in db
@@ -27,83 +55,90 @@ function StaffDetailsScreen({ navigation }) {
     setEnableTotal(true);
   }
 
-  const toggleSafeDropsOverlay = () => {
-    setSafeDropsOverlayVisible(!safeDropsOverlayVisible);
-  }
-
-  const toggleLastCashOverlay = () => {
-    setLastCashOverlayVisible(!lastCashOverlayVisible);
-  }
-
   const toggleCalculateOverlay = () => {
     setCalculateOverlayVisible(!calculateOverlayVisible);
   }
 
-  const toggleAssignOverlay = () => {
-    setAssignOverlayVisible(!assignOverlayVisible);
-  }
-
   const updatePumpDetails = (pumpDetails) => {
     setPump(pumpDetails);
-    //toggleAssignOverlay();
-    setAssignOverlayVisible(!assignOverlayVisible);
+  }
+
+  const updateReading = (readingValue, readingType, fuelType) => {
+    if(readingType == OPENING_READING && fuelType == PETROL){
+      setPetrolOpening(readingValue);
+    }else if(readingType == OPENING_READING && fuelType == DIESEL){
+      setDieselOpening(readingValue);
+    }else if(readingType == CLOSING_READING && fuelType == PETROL){
+      setPetrolClosing(readingValue);
+    }else if(readingType == CLOSING_READING && fuelType == DIESEL){
+      setDieselClosing(readingValue);
+    }
+  }
+
+  const updateOilPacketCount = (count) => {
+    setPacketCount(count);
+    setPacketAmount(parseInt(count)*20);
+  }
+
+  const updateSafedropCount = (count) => {
+    setSafeDropCount(parseInt(count));
+    setSafeDropAmount(parseInt(count)*8000);
+  }
+
+  const updateLastDrop = (lastDrop) => {
+    setLastDrop(lastDrop);
+  }
+
+  const calculateTotal = () => {
+    var pLiters = petrolClosing - petrolOpening;
+    var dLiters = dieselClosing - dieselOpening;
+    setReport({
+      petrolLiters: pLiters,
+      dieselLiters: dLiters,
+      oilPackets: packetCount,
+      oilAmount: packetAmount,
+      safeDropCount: safeDropCount,
+      safeDropAmount: safeDropAmount,
+      lastDrop: lastDrop 
+    });
+    toggleCalculateOverlay();
   }
 
   return (
     <ScrollView>
-      <View style={{flex:1, justifyContent: 'center'}}>
-        <View style={{flex:3, flexDirection: 'row', alignItems: 'flex-start'}}>
-          <Text style={{padding:10, fontSize:15 }}>Assigned:</Text>
-          <Text style={{padding:10, fontSize:15, fontWeight:'bold' }}>{pump}</Text>
-          <View style={{flex:1, alignItems: 'flex-end'}}>
-            <Button type='clear' titleStyle={{ fontSize: 15, fontWeight:'bold'}} title='Assign' onPress={toggleAssignOverlay}/>
-            <Overlay overlayStyle={{height: 400, width: 300, borderRadius: 10}} visible={assignOverlayVisible} onBackdropPress={toggleAssignOverlay} supportedOrientations={['portrait', 'landscape']}>
-              <ScrollView>
-                <AssignPumpComponent actionName={updatePumpDetails}/>
-              </ScrollView>
-            </Overlay>
-          </View>
+    <Card containerStyle={{borderRadius: 5, borderColor: 'cornflowerblue'}}>
+      <View style={{flex:1, flexDirection: 'row'}}>
+        <Text style={{padding:10, fontSize:15 }}>Assigned:</Text>
+        <Text style={{padding:10, fontSize:15, fontWeight:'bold' }}>{pump}</Text>
+        <View style={{flex:1, alignItems: 'flex-end'}}>
+            <AssignPumpOverlay actionName={updatePumpDetails} />
         </View>
       </View>
-      <Divider width={3} subHeader="Opening Reading:" subHeaderStyle={{padding: 10, fontSize:18, fontWeight:'bold', color: 'dodgerblue' }}/>
-      <View style={{flex: 1, flexDirection: 'row'}}>
-        <View style={{flex:1}}>
-          <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold', color: 'green' }}>Petrol</Text>
+    </Card>
+      
+      <Card containerStyle={{borderRadius: 5, borderColor: 'orange'}}>
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <View style={{flex:1}}>
+              <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold', color: 'green' }}>Petrol</Text>
+            </View>
+            <View style={{flex: 1, alignItems: 'flex-start'}}>
+              <ReadingOverlay fuelType={PETROL} readingType={OPENING_READING} update={updateReading} headerLabel='Petrol Reading' inputLabel='Opening' value={petrolOpening}/>
+            </View>
+            <View style={{flex:1}}>
+              <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>Diesel</Text>
+            </View>
+            <View style={{flex: 1, alignItems: 'flex-start'}}>
+              <ReadingOverlay fuelType={DIESEL} readingType={OPENING_READING} update={updateReading} headerLabel='Diesel Reading' inputLabel='Opening' value={dieselOpening}/>
+            </View>
+          </View>
           <Divider />
           <View style={{flex:1, flexDirection: 'row'}}>
-            {enableStartWork && <Input label='Opening' />}
-            {
-              !enableStartWork && 
-              <>
-              <View style={{flex:2.2}}>
-                <Text style={{ flex:1, padding: 10, fontSize:15 }}>Opening: </Text>
-              </View>
-              <View style={{flex:3}}>
-                <Text style={{ padding: 10,fontSize:15, fontWeight: 'bold', color: 'green'}}>10000</Text>
-              </View>
-              </>
-            }
+            <Text style={{flex: 1, padding: 10, fontSize:15 }}>Opening: </Text>
+            <Text style={{flex: 1, padding: 10,fontSize:15, fontWeight: 'bold', color: 'green'}}>{petrolOpening}</Text>
+            <Text style={{flex: 1, padding: 10, fontSize:15 }}>Opening: </Text>
+            <Text style={{flex: 1, padding: 10,fontSize:15, fontWeight: 'bold'}}>{dieselOpening}</Text>
           </View>
-        </View>
-        <View style={{flex:1}}>
-          <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>Diesel</Text>
-          <Divider />
-          <View style={{flex:1, flexDirection: 'row'}}>
-            {enableStartWork && <Input label='Opening' />}
-            {
-              !enableStartWork && 
-              <>
-              <View style={{flex:2.2}}>
-                <Text style={{ flex:1, padding: 10, fontSize:15 }}>Opening: </Text>
-              </View>
-              <View style={{flex:3}}>
-                <Text style={{ padding: 10,fontSize:15, fontWeight: 'bold', color: 'black'}}>10000</Text>
-              </View>
-              </>
-            }
-          </View>
-        </View>
-      </View>
+      </Card>
       {
         enableStartWork &&
         <View style={{flex:1, padding: 20}}>
@@ -113,161 +148,94 @@ function StaffDetailsScreen({ navigation }) {
       {
         !enableStartWork &&
         <>
-          <Divider width={3} subHeader="Oils:" subHeaderStyle={{padding: 10, fontSize:18, fontWeight:'bold', color: 'dodgerblue' }}/>
-          <View style={{flex:1}}>
-            <View style={{flex:1, flexDirection: 'row'}}>
-                <View style={{flex:1, flexDirection:'row'}}>
-                  <Text style={{flex:2.2, padding: 10, fontSize:15 }}>Packets:</Text>
-                  <Text style={{flex:3, padding: 10, fontSize:15, fontWeight:'bold' }}>10</Text>
-                </View>
-                <View style={{flex:1, flexDirection:'row'}}>
-                  <Text style={{flex:2.2, padding: 10, fontSize:15 }}>Amount:</Text>
-                  <Text style={{flex:3, padding: 10, fontSize:15, fontWeight:'bold' }}>200</Text>
-                </View>
-              </View>
-          </View>
-          {/* Returns section start*/}
-          <Divider width={3} subHeader="Returns:" subHeaderStyle={{padding: 10, fontSize:18, fontWeight:'bold', color: 'dodgerblue' }}/>
-          <View style={{flex:1}}>
-            <View style={{flexDirection: 'row', alignItems:'flex-start'}}>
-              <Text style={{ padding: 10, fontSize:15, fontWeight:'bold' }}>Safedrops</Text>
-              <Button icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} type='clear' onPress={toggleSafeDropsOverlay} />
-              <Overlay overlayStyle={{height: 180, width: 250, borderRadius: 10}} isVisible={safeDropsOverlayVisible} onBackdropPress={toggleSafeDropsOverlay} supportedOrientations={['portrait', 'landscape']}>
-                <ScrollView style={{flex: 1}}>
-                  <Text style={{flex:0.9, padding: 10, fontSize:15, fontWeight:'bold' }}>Safedrops:</Text>
-                  <View style={{flex: 1, flexDirection: 'row'}}>
-                    <View style={{flex: 2}}><Input value='10' /></View>
-                    <View style={{flex: 1}}><Button type='clear' title='+1'/></View>
-                    <View style={{flex: 1}}><Button type='clear' title='-1'/></View>
-                  </View>
-                  <Button title='Done' onPress={toggleSafeDropsOverlay}/>
-                </ScrollView>
-              </Overlay>
-            </View>
-            <Divider />
-            <View style={{flex:1, flexDirection: 'row'}}>
-              <View style={{flex:1, flexDirection:'row'}}>
-                <Text style={{flex:2.2, padding: 10, fontSize:15 }}>Count:</Text>
-                <Text style={{flex:3, padding: 10, fontSize:15, fontWeight:'bold' }}>10</Text>
-              </View>
-              <View style={{flex:1, flexDirection:'row'}}>
-                <Text style={{flex:2.2, padding: 10, fontSize:15 }}>Amount:</Text>
-                <Text style={{flex:3, padding: 10, fontSize:15, fontWeight:'bold' }}>8000</Text>
-              </View>
-            </View>
-          </View>
-        
-          <View style={{flex: 1}}>
-            <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
-              <Text style={{padding: 10, fontSize:15, fontWeight:'bold' }}>Lastcash</Text>
-              <Button icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} type='clear' onPress={toggleLastCashOverlay}/>
-              <Overlay overlayStyle={{height: 180, width: 350, borderRadius: 10}} isVisible={lastCashOverlayVisible} onBackdropPress={toggleLastCashOverlay} supportedOrientations={['portrait', 'landscape']}>
-                <ScrollView style={{flex: 1}}>
-                  <Text style={{flex:0.9, padding: 10, fontSize:15, fontWeight:'bold' }}>Lastcash:</Text>
-                  <View style={{flex: 1, flexDirection: 'row'}}>
-                    <View style={{flex: 1}}><Input label='Amount' value='7500'/></View>
-                    <View style={{flex: 1}}><Input label='Card' value='12000'/></View>
-                    <View style={{flex: 1}}><Input label='UPI' value='15000'/></View>
-                  </View>
-                  <Button title='Done' onPress={toggleLastCashOverlay}/>
-                </ScrollView>
-              </Overlay>
-            </View>
-            <Divider />
-            <View style={{flex:1, flexDirection: 'row'}}>
+          <Card containerStyle={{borderRadius: 5, borderColor: 'blue'}}>
               <View style={{flex:1, flexDirection: 'row'}}>
-                <View style={{flex:2.2}}>
-                  <Text style={{ flex:1, padding: 10, fontSize:15}}>Amount: </Text>
-                </View>
-                <View style={{flex:3}}>
-                  <Text style={{ padding: 10,fontSize:15, fontWeight: 'bold'}}>7500</Text>
+                <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>Oils:</Text>
+                <View style={{flex:1}} alignItems='flex-end'>
+                  <OilCountOverlay update={updateOilPacketCount} value={packetCount}/>
                 </View>
               </View>
+              <Card.Divider/>
+              <View style={{flex:1, flexDirection: 'row'}}>
+                <Text style={{flex:1, padding: 10, fontSize:15 }}>Packets:</Text>
+                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{packetCount}</Text>
+                <Text style={{flex:1, padding: 10, fontSize:15 }}>Amount:</Text>
+                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{packetAmount}</Text>
+              </View>
+            </Card>
 
+            <Card containerStyle={{borderRadius: 5, borderColor: 'green'}}>
               <View style={{flex:1, flexDirection: 'row'}}>
-                <View style={{flex:2.2}}>
-                  <Text style={{ flex:1, padding: 10, fontSize:15}}>Card: </Text>
-                </View>
-                <View style={{flex:3}}>
-                  <Text style={{ padding: 10,fontSize:15, fontWeight: 'bold'}}>12000</Text>
+                <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>Safe Drops:</Text>
+                <View style={{flex:1}} alignItems='flex-end'>
+                  <SafedropCountOverlay update={updateSafedropCount} value={safeDropCount}/>
                 </View>
               </View>
-            </View>
-        
-            <View style={{flex:1, flexDirection: 'row'}}>
+              <Card.Divider/>
               <View style={{flex:1, flexDirection: 'row'}}>
-                <View style={{flex:2.2}}>
-                  <Text style={{ flex:1, padding: 10, fontSize:15}}>UPI: </Text>
-                </View>
-                <View style={{flex:3}}>
-                  <Text style={{ padding: 10,fontSize:15, fontWeight: 'bold'}}>15000</Text>
-                </View>
+                <Text style={{flex:1, padding: 10, fontSize:15 }}>Count:</Text>
+                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{safeDropCount}</Text>
+                <Text style={{flex:1, padding: 10, fontSize:15 }}>Amount:</Text>
+                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{safeDropAmount}</Text>
               </View>
               <View style={{flex:1, flexDirection: 'row'}}>
-                <View style={{flex:2.2}}>
-                  <Text style={{ flex:1, padding: 10, fontSize:15}}>Credit: </Text>
-                </View>
-                <View style={{flex:3}}>
-                  <Text style={{ padding: 10,fontSize:15, fontWeight: 'bold'}}>18000</Text>
+                <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>Last Drop:</Text>
+                <View style={{flex:1}} alignItems='flex-end'>
+                  <LastDropOverlay update={updateLastDrop} value={lastDrop}/>
                 </View>
               </View>
-            </View>
-          </View>
-          {/** Returns section end */}
+              <Card.Divider/>
+              <View style={{flex:1, flexDirection: 'row'}}>
+                <Text style={{flex:1, padding: 10, fontSize:15 }}>Last Cash:</Text>
+                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{lastDrop.lastCash}</Text>
+                <Text style={{flex:1, padding: 10, fontSize:15 }}>Card:</Text>
+                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{lastDrop.card}</Text>
+              </View>
+              <View style={{flex:1, flexDirection: 'row'}}>
+                <Text style={{flex:1, padding: 10, fontSize:15 }}>UPI:</Text>
+                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{lastDrop.upi}</Text>
+                <Text style={{flex:1, padding: 10, fontSize:15 }}>Credit:</Text>
+                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{lastDrop.credit}</Text>
+              </View>
+            </Card>
         </>
       }
       
       {
         !enableStartWork &&
         <>
-          <Divider width={3} subHeader="Closing Reading:" subHeaderStyle={{padding: 10, fontSize:18, fontWeight:'bold', color: 'dodgerblue' }}/>
+          <Card containerStyle={{borderRadius: 5, borderColor: 'red'}}>
           <View style={{flex: 1, flexDirection: 'row'}}>
             <View style={{flex:1}}>
               <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold', color: 'green' }}>Petrol</Text>
-              <Divider />
-              <View style={{flex:1, flexDirection: 'row'}}>
-                {enableEndWork && <Input label='Closing' />}
-                {
-                  !enableEndWork && 
-                  <>
-                  <View style={{flex:2.2}}>
-                    <Text style={{ flex:1, padding: 10, fontSize:15 }}>Closing: </Text>
-                  </View>
-                  <View style={{flex:3}}>
-                    <Text style={{ padding: 10,fontSize:15, fontWeight: 'bold', color: 'green'}}>10000</Text>
-                  </View>
-                  </>
-                }
-              </View>
+            </View>
+            <View style={{flex: 1, alignItems: 'flex-start'}}>
+              <ReadingOverlay fuelType={PETROL} readingType={CLOSING_READING} update={updateReading} headerLabel='Petrol Reading' inputLabel='Closing' value={petrolClosing}/>
             </View>
             <View style={{flex:1}}>
               <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>Diesel</Text>
-              <Divider />
-              <View style={{flex:1, flexDirection: 'row'}}>
-                {enableEndWork && <Input label='Closing' />}
-                {
-                  !enableEndWork && 
-                  <>
-                  <View style={{flex:2.2}}>
-                    <Text style={{ flex:1, padding: 10, fontSize:15 }}>Closing: </Text>
-                  </View>
-                  <View style={{flex:3}}>
-                    <Text style={{ padding: 10,fontSize:15, fontWeight: 'bold', color: 'black'}}>10000</Text>
-                  </View>
-                  </>
-                }
-              </View>
+            </View>
+            <View style={{flex: 1, alignItems: 'flex-start'}}>
+              <ReadingOverlay fuelType={DIESEL} readingType={CLOSING_READING} update={updateReading} headerLabel='Diesel Reading' inputLabel='Closing' value={dieselClosing}/>
             </View>
           </View>
+          <Divider />
+          <View style={{flex:1, flexDirection: 'row'}}>
+            <Text style={{flex: 1, padding: 10, fontSize:15 }}>Closing: </Text>
+            <Text style={{flex: 1, padding: 10,fontSize:15, fontWeight: 'bold', color: 'green'}}>{petrolClosing}</Text>
+            <Text style={{flex: 1, padding: 10, fontSize:15 }}>Closing: </Text>
+            <Text style={{flex: 1, padding: 10,fontSize:15, fontWeight: 'bold'}}>{dieselClosing}</Text>
+          </View>
+        </Card>
           {
             enableEndWork &&
 
             <View style={{flex:1, flexDirection:'row', justifyContent: 'center'}}>
               <View style={{flex: 1, padding: 10}}>
-                <Button buttonStyle={{borderRadius:20}} title='Calculate Total' onPress={toggleCalculateOverlay}/>
+                <Button buttonStyle={{borderRadius:20}} title='Calculate Total' onPress={calculateTotal}/>
                 <Overlay overlayStyle={{height: 350, width: 370, borderRadius: 10}} isVisible={calculateOverlayVisible} onBackdropPress={toggleCalculateOverlay} supportedOrientations={['portrait', 'landscape']}>
                     <ScrollView style={{flex: 1}}>
-                      <ReportComponent />
+                      <ReportComponent value={report}/>
                     </ScrollView>
                 </Overlay>
               </View>
@@ -281,10 +249,9 @@ function StaffDetailsScreen({ navigation }) {
           }
         </>
       }
-
       {
         enableTotal &&
-          <ReportComponent />
+          <ReportComponent value={report}/>
       }
     </ScrollView>
   );

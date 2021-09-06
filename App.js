@@ -28,7 +28,7 @@ function App() {
           ) 
         }}/>
         <Tab.Screen name="Staff" component={StaffStack} options={{ 
-          tabBarLabel: 'Staffs', 
+          tabBarLabel: 'Assign & Start', 
           headerShown: false,
           tabBarIcon: () => (
             <Ionicons name="person-outline" size={20} />
