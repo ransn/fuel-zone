@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen  from "./components/screens/HomeScreen";
 import StaffStack  from "./components/screens/StaffStack";
+import WorkStack from "./components/screens/WorkStack";
 import PumpStack from "./components/screens/PumpStack";
 import CreditStack from "./components/screens/CreditStack";
 import SettingsStack from "./components/screens/SettingsStack";
@@ -20,14 +21,21 @@ function App() {
             <Ionicons name="home-outline" size={20} />
           )
         }}/>
-        <Tab.Screen name="Pump" component={PumpStack} options={{ 
+        {/* <Tab.Screen name="Pump" component={PumpStack} options={{ 
           tabBarLabel: 'Pumps', 
           headerShown: false,
           tabBarIcon: () => (
             <Ionicons name="water-outline" size={20} />
           ) 
-        }}/>
-        <Tab.Screen name="Staff" component={StaffStack} options={{ 
+        }}/> */}
+        {/* <Tab.Screen name="Staff" component={StaffStack} options={{ 
+          tabBarLabel: 'Staff', 
+          headerShown: false,
+          tabBarIcon: () => (
+            <Ionicons name="person-outline" size={20} />
+          ) 
+        }}/> */}
+        <Tab.Screen name="Work" component={WorkStack} options={{ 
           tabBarLabel: 'Assign & Start', 
           headerShown: false,
           tabBarIcon: () => (

@@ -1,0 +1,26 @@
+{
+    "name": "",
+    "pumpName": "",
+    "operatorName": "",
+    "status": "N",
+    "fuelDetails":{
+        "petrolOpening": 0,
+        "petrolClosing": 0,
+        "dieselOpening": 0,
+        "dieselClosing": 0
+      },
+    "oilDetails":{
+        "packetCount": 0,
+        "packetAmount": 0
+      },
+    "safeDropDetails":{
+        "safeDropCount": 0,
+        "safeDropAmount": 0
+      },
+    "lastDropDetails":{
+        "lastCash": 0,
+        "card": 0,
+        "upi": 0,
+        "credit": 0
+      }
+}

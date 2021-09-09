@@ -4,25 +4,35 @@ import { Button, ListItem, Overlay } from 'react-native-elements';
 
 const list = [
   {
-    name: 'Pump 1',
+    name: 'Amy Farha',
+    avatar_url: 'https://i.imgur.com//ee89Mrg.jpg',
+    subtitle: 'Assigned: Pump1'
   },
   {
-    name: 'Pump 2',
+    name: 'Chris Jackson',
+    avatar_url: 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg',
+    subtitle: 'Assigned: Pump2'
   },
   {
-    name: 'Pump 3',
+    name: 'Amy Farha',
+    avatar_url: 'https://i.imgur.com//ee89Mrg.jpg',
+    subtitle: 'Assigned: Pump3'
   },
   {
-    name: 'Pump 4',
+    name: 'Chris Jackson',
+    avatar_url: 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg',
+    subtitle: 'Assigned: Pump4'
   },
   {
-    name: 'Air Pump',
+    name: 'Amy Farha',
+    avatar_url: 'https://i.imgur.com//ee89Mrg.jpg',
+    subtitle: 'Assigned: Air Pump'
   }
 ]
-function AssignPumpOverlay(props, { navigation }) {
+function AssignStaffOverlay(props, { navigation }) {
   const [assignOverlayVisible, setAssignOverlayVisible] = useState(false);
-  const assignPump = (pump) => {
-    props.actionName(pump.name);
+  const assignStaff = (staff) => {
+    props.actionName(staff.name);
     toggleAssignOverlay();
   }
   const toggleAssignOverlay = () => {
@@ -39,7 +49,7 @@ function AssignPumpOverlay(props, { navigation }) {
       >
           {
             list.map((l, i) => (
-              <ListItem key={i} bottomDivider onPress={()=>{assignPump(l)}}>
+              <ListItem key={i} bottomDivider onPress={()=>{assignStaff(l)}}>
                 <ListItem.Content>
                   <ListItem.Title>{l.name}</ListItem.Title>
                 </ListItem.Content>
@@ -51,4 +61,4 @@ function AssignPumpOverlay(props, { navigation }) {
   );
 }
 
-export default AssignPumpOverlay;
+export default AssignStaffOverlay;

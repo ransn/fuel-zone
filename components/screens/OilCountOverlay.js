@@ -44,7 +44,7 @@ function OilCountOverlay(props, { navigation }) {
         </View>
         <View style={{flex:1, flexDirection:'row'}}>
           <View style={{flex:2}}>
-            <Input keyboardType='numeric' onChangeText={resetCount => setResetCount(resetCount)} />
+            <Input keyboardType='numeric' onChangeText={resetCount => setResetCount(resetCount)}/>
           </View>
           <View style={{flex:1}}>
             <Button title='Set' buttonStyle={{backgroundColor: 'red'}} onPress={resetOilPacketsCount}/>

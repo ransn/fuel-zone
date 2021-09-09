@@ -1,41 +1,62 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { ListItem, Avatar, Divider } from 'react-native-elements';
+import { ScrollView, View, Text } from 'react-native';
+import { Card, ListItem, Avatar, Badge } from 'react-native-elements';
 
 const list = [
   {
-    name: 'Pump 1',
-    avatar_url: 'https://i.imgur.com//ee89Mrg.jpg'
+    name: 'Work 1',
+    pumpName: 'Pump 1',
+    staffName: 'Amy Farha',
+    status: "A"
   },
   {
-    name: 'Pump 2',
-    avatar_url: 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg'
+    name: 'Work 2',
+    pumpName: 'Pump 2',
+    staffName: 'Chris Jackson',
+    status: "I"
   },
   {
-    name: 'Pump 3',
-    avatar_url: 'https://i.imgur.com//ee89Mrg.jpg'
+    name: 'Work 3',
+    pumpName: 'Pump 3',
+    staffName: 'Sharath',
+    status: "A"
   },
   {
-    name: 'Pump 4',
-    avatar_url: 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg'
+    name: 'Work 4',
+    pumpName: 'Pump 4',
+    staffName: 'Raju',
+    status: "N"
   }
 ]
+
+const badgeStatus = {
+  "N": "primary",
+  "A": "success",
+  "I": "error"
+}
+
 function PumpScreen({ navigation }) {
   return (
-    <View>
+    <ScrollView style={{flex:1}}>
   {
     list.map((l, i) => (
-      <ListItem key={i} bottomDivider onPress={() => navigation.navigate('PumpDetails', {pump: l})}>
+      <ListItem key={i} bottomDivider onPress={() => navigation.navigate('StaffDetails', {pump: l})}>
         <Avatar rounded source={require('../../images/pump.png')} />
         <ListItem.Content>
           <ListItem.Title>{l.name}</ListItem.Title>
-          <ListItem.Subtitle>{l.subtitle}</ListItem.Subtitle>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={{color:'gray'}}>Pump: </Text>
+            <Text style={{color:'gray', fontWeight:'bold'}}>{ l.pumpName}</Text>
+            <Text style={{color:'gray'}}>, Assigned:</Text>
+            <Text style={{color:'gray', fontWeight:'bold'}}> { l.staffName}</Text>
+          </View>
         </ListItem.Content>
+        <Badge status={badgeStatus[l.status]} value={l.status}/>
         <ListItem.Chevron />
       </ListItem>
     ))
   }
-</View>
+</ScrollView>
   );
 }
 

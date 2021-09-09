@@ -35,21 +35,29 @@ function LastDropOverlay(props, { navigation }) {
         <View style={{flex:1, flexDirection:'row'}}>
           
           <View style={{flex:1}}>
-            <Input keyboardType='numeric' label='Last Cash' onChangeText={cash => setLastDrop({...lastDrop, lastCash: cash})} />
+            <Input keyboardType='numeric' 
+                   label='Last Cash'
+                   onChangeText={cash => setLastDrop({...lastDrop, lastCash: cash})} />
           </View>
 
           <View style={{flex:1}}>
-            <Input keyboardType='numeric' label='Card' onChangeText={cardAmt => setLastDrop({...lastDrop, card: cardAmt})} />
+            <Input keyboardType='numeric' 
+                  label='Card' 
+                  onChangeText={cardAmt => setLastDrop({...lastDrop, card: cardAmt})} />
           </View>
           
         </View>
         <View style={{flex:1, flexDirection:'row'}}>
           <View style={{flex:1}}>
-            <Input keyboardType='numeric' label='UPI' onChangeText={upiAmt => setLastDrop({...lastDrop, upi: upiAmt})} />
+            <Input keyboardType='numeric' 
+                label='UPI'
+                onChangeText={upiAmt => setLastDrop({...lastDrop, upi: upiAmt})} />
           </View>
 
           <View style={{flex:1}}>
-            <Input keyboardType='numeric' label='Credit' onChangeText={creditAmt => setLastDrop({...lastDrop, credit: creditAmt})} />
+            <Input keyboardType='numeric' 
+                label='Credit' 
+                onChangeText={creditAmt => setLastDrop({...lastDrop, credit: creditAmt})} />
           </View>
         </View>
         <Button title='Done' onPress={updateLastDrop}/>

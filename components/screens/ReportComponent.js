@@ -2,73 +2,84 @@ import React, {useState} from 'react';
 import { View, ScrollView } from "react-native";
 import { Card, Text, Divider } from "react-native-elements";
 function ReportComponent(props){
-    const report = props.value;
-    const petrolAmt = report.petrolLiters*105.23;
-    const dieselAmt = report.dieselLiters*105;
-    const salesTotal = petrolAmt+dieselAmt+report.oilAmount;
-    const returnsTotal = parseInt(report.safeDropAmount)+
-                        parseInt(report.lastDrop.lastCash)+
-                        parseInt(report.lastDrop.card)+
-                        parseInt(report.lastDrop.upi)+
-                        parseInt(report.lastDrop.credit);
+    const work = props.value;
+    console.log(work);
+    const {petrolOpening, petrolClosing, dieselOpening, dieselClosing} = work.fuelDetails;
+    const {packetCount, packetAmount} = work.oilDetails;
+    const petrolLiters = petrolClosing - petrolOpening;
+    const petrolAmt = petrolLiters*105.23;
+    const dieselLiters = dieselClosing - dieselOpening;
+    const dieselAmt = dieselLiters*105;
+    const salesTotal = petrolAmt+dieselAmt+packetAmount;
+
+    // Returns
+
+    const {safeDropCount, safeDropAmount} = work.safeDropDetails;
+    const {lastCash, card, upi, credit} = work.lastDropDetails;
+
+    const returnsTotal = parseInt(safeDropAmount)+
+                        parseInt(lastCash)+
+                        parseInt(card)+
+                        parseInt(upi)+
+                        parseInt(credit);
     const difference = salesTotal - returnsTotal;
     return(
         <Card>
             <Card.Title>Summary</Card.Title>
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Petrol(105.23)</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Liters: {report.petrolLiters}</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {petrolAmt}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Liters: {petrolLiters}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {petrolAmt.toFixed(2)}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Diesel(105)</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Liters: {report.dieselLiters}</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {dieselAmt}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Liters: {dieselLiters}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {dieselAmt.toFixed(2)}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Oil(20)</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Count: {report.oilPackets}</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {report.oilAmount}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Count: {packetCount}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {packetAmount}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}></Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}></Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12, fontWeight:'bold'}}>Total: {salesTotal}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12, fontWeight:'bold'}}>Total: {salesTotal.toFixed(2)}</Text>
             </View>
             <Divider width={2} subHeaderStyle={{fontWeight: 'bold', fontSize:18}}/>
-            <Card.Title style={{fontWeight:'bold'}}>Returns</Card.Title>
+            <Card.Title style={{fontWeight:'bold', color:'green'}}>Returns</Card.Title>
             <Divider width={2} subHeaderStyle={{fontWeight: 'bold', fontSize:18}}/>
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Safe Drop</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Count: {report.safeDropCount}</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {report.safeDropAmount}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Count: {safeDropCount}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {safeDropAmount}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}></Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Lastcash</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {report.lastDrop.lastCash}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {lastCash}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}></Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Card</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {report.lastDrop.card}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {card}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}></Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>UPI</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {report.lastDrop.upi}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {upi}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}></Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Credit</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {report.lastDrop.credit}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {credit}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
@@ -80,7 +91,7 @@ function ReportComponent(props){
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}></Text>
               <Text style={{ flex:2, padding: 5, fontSize:12, fontWeight:'bold'}}></Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12, color: 'red', fontWeight:'bold'}}>Diff: {difference}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12, color: 'red', fontWeight:'bold'}}>Diff: {difference.toFixed(2)}</Text>
             </View>           
           </Card>        
     )
