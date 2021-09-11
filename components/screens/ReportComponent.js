@@ -4,13 +4,17 @@ import { Card, Text, Divider } from "react-native-elements";
 function ReportComponent(props){
     const work = props.value;
     console.log(work);
-    const {petrolOpening, petrolClosing, dieselOpening, dieselClosing} = work.fuelDetails;
+    const {petrolOpening, petrolClosing, 
+            dieselOpening, dieselClosing, 
+            petrolUgt, dieselUgt} = work.fuelDetails;
     const {packetCount, packetAmount} = work.oilDetails;
     const petrolLiters = petrolClosing - petrolOpening;
     const petrolAmt = petrolLiters*105.23;
     const dieselLiters = dieselClosing - dieselOpening;
     const dieselAmt = dieselLiters*105;
     const salesTotal = petrolAmt+dieselAmt+packetAmount;
+    const petrolUgtAmt = petrolUgt*105.23;
+    const dieselUgtAmt = dieselUgt*105;
 
     // Returns
 
@@ -21,7 +25,9 @@ function ReportComponent(props){
                         parseInt(lastCash)+
                         parseInt(card)+
                         parseInt(upi)+
-                        parseInt(credit);
+                        parseInt(credit)-
+                        parseInt(petrolUgtAmt)-
+                        parseInt(dieselUgtAmt);
     const difference = salesTotal - returnsTotal;
     return(
         <Card>
@@ -52,6 +58,18 @@ function ReportComponent(props){
             <Divider width={2} subHeaderStyle={{fontWeight: 'bold', fontSize:18}}/>
             <Card.Title style={{fontWeight:'bold', color:'green'}}>Returns</Card.Title>
             <Divider width={2} subHeaderStyle={{fontWeight: 'bold', fontSize:18}}/>
+             <View style={{flex:1, flexDirection:'row'}}>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>UGT(In Ltrs)</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Petrol: {petrolUgt}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12, color:'red'}}>Amt: {petrolUgtAmt}</Text>
+            </View>
+             <Divider />
+             <View style={{flex:1, flexDirection:'row'}}>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>UGT(In Ltrs)</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Diesel: {dieselUgt}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12, color:'red'}}>Amt: {dieselUgtAmt}</Text>
+            </View>
+             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Safe Drop</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Count: {safeDropCount}</Text>

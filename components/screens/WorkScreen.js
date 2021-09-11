@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { ScrollView, View, Text, Alert } from 'react-native';
+import { RefreshControl, ScrollView, View, Text, Alert } from 'react-native';
 import { Card, ListItem, Avatar, Badge, SpeedDial, Divider, Button } from 'react-native-elements';
 
 const badgeStatus = {
@@ -8,9 +8,20 @@ const badgeStatus = {
   "I": "error"
 }
 
+const wait = (timeout) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
 function WorkScreen({ navigation, route }) {
   const [workList,setWorkList] = useState([]);
   const [open,setOpen] = useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   const createWork = () => {
     let workName = '';
     if(workList.length == 0){
@@ -58,21 +69,41 @@ function WorkScreen({ navigation, route }) {
     );
   }
 
+  const navigateTo = (work) => {
+    if(work.status == "I"){
+      navigation.navigate('WorkReport', {workItem: work})
+    }else{
+      navigation.navigate('WorkDetails', {workItem: work})
+    }
+  }
+
   return (
     <View style={{flex:1}}>
     {
       workList.length == 0 &&
       <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
         <Text style={{color:'#3a414e', fontSize:18, fontWeight:'bold'}}> 
-            Out of work, Please Add Work
+            Out of work
+        </Text>
+        <Text style={{color:'#3a414e', fontSize:15, fontWeight:'bold'}}> 
+            Please click + below to Add Work
         </Text>
       </View>
     }
     
-    <ScrollView style={{flex:1}}>
+    <ScrollView 
+      style={{flex:1}}
+      refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      
+    >
   {
     workList.map((l, i) => (
-      <ListItem.Swipeable key={i} bottomDivider onPress={() => navigation.navigate('WorkDetails', {workItem: l})}
+      <ListItem.Swipeable key={i} bottomDivider onPress={() => navigateTo(l)}
           rightContent={
             <Button
               title="Delete"
@@ -102,7 +133,7 @@ function WorkScreen({ navigation, route }) {
 </ScrollView>
     <SpeedDial
       isOpen={open}
-      icon={{ name: 'edit', color: '#fff' }}
+      icon={{ name: 'add', color: '#fff' }}
       openIcon={{ name: 'close', color: '#fff' }}
       onOpen={() => setOpen(!open)}
       onClose={() => setOpen(!open)}

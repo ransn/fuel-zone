@@ -58,15 +58,14 @@ function CreditDetailsScreen({ route, navigation }) {
           <Text style={{ paddingTop:10, fontSize:20, fontWeight:'bold' }}>Balance: {credit.subtitle}</Text>
         </View>
         <View style={{flex:1, flexDirection: 'row', alignItems:'flex-end'}}>
-          <Button icon={{name: "create", type:'ionicon', size: 30, color: "dodgerblue"}} type='clear' onPress={toggleEditCreditUserOverlay}/>
-          <Overlay overlayStyle={{height: 280, width: 350, borderRadius: 10}} isVisible={visibleEditOverlay} onBackdropPress={toggleEditCreditUserOverlay} supportedOrientations={['portrait', 'landscape']}>
+          {/* <Overlay overlayStyle={{height: 280, width: 350, borderRadius: 10}} isVisible={visibleEditOverlay} onBackdropPress={toggleEditCreditUserOverlay} supportedOrientations={['portrait', 'landscape']}>
             <ScrollView style={{flex: 1}}>
               <Text style={{flex:0.9, padding: 10, fontSize:15, fontWeight:'bold' }}>Edit:</Text>
               <Input label='Name' value={credit.name}/>
               <Input label='Mobile' value={credit.mobile}/>
               <Button title='Save' onPress={toggleEditCreditUserOverlay}/>
             </ScrollView>
-          </Overlay>
+          </Overlay> */}
           <Button icon={{name: 'add-circle', type:'ionicon', size: 30, color: "dodgerblue"}} type='clear' onPress={toggleOverlay}/>
           <Overlay overlayStyle={{height: 200, width: 350, borderRadius: 10}} isVisible={visible} onBackdropPress={toggleOverlay} supportedOrientations={['portrait', 'landscape']}>
           <ScrollView style={{flex: 1}}>

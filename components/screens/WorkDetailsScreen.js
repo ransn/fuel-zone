@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { View, Image, ScrollView } from 'react-native';
+import { StyleSheet, View, Image, ScrollView } from 'react-native';
 import { Card, Divider, Button, Text, Overlay } from 'react-native-elements';
 import ReportComponent from "./ReportComponent";
 import AssignPumpOverlay from "./AssignPumpOverlay";
@@ -38,7 +38,9 @@ function WorkDetailsScreen({ route, navigation }) {
     petrolOpening: parseInt(0),
     petrolClosing: parseInt(0),
     dieselOpening: parseInt(0),
-    dieselClosing: parseInt(0)
+    dieselClosing: parseInt(0),
+    petrolUgt: parseInt(0),
+    dieselUgt: parseInt(0)
   });
   const [oilDetails, setOilDetails] = useState({
     packetCount: parseInt(0),
@@ -66,6 +68,7 @@ function WorkDetailsScreen({ route, navigation }) {
   const DIESEL = 'Diesel';
   const OPENING_READING = 'Opening';
   const CLOSING_READING = 'Closing';
+  const UGT_READING = 'Ugt'
 
   const startWork = () => {
     let updatedWork = work;
@@ -81,6 +84,16 @@ function WorkDetailsScreen({ route, navigation }) {
     let updatedWork = work;
     updatedWork.status = 'I';
     setWork(updatedWork);
+    setReport({
+      fuelDetails: fuelDetails,
+      oilDetails: oilDetails,
+      safeDropDetails: safeDropDetails,
+      lastDropDetails: lastDropDetails
+    });
+    navigation.navigate({
+      name: 'WorkList',
+      params: {work: work}
+    })
   }
 
   const toggleCalculateOverlay = () => {
@@ -104,7 +117,12 @@ function WorkDetailsScreen({ route, navigation }) {
       setFuelDetails({...fuelDetails, petrolClosing: readingValue});
     }else if(readingType == CLOSING_READING && fuelType == DIESEL){
       setFuelDetails({...fuelDetails, dieselClosing: readingValue});
+    }else if(readingType == UGT_READING && fuelType == PETROL){
+      setFuelDetails({...fuelDetails, petrolUgt: readingValue});
+    }else if(readingType == UGT_READING && fuelType == DIESEL){
+      setFuelDetails({...fuelDetails, dieselUgt: readingValue});
     }
+
   }
 
   const updateOilPacketCount = (count) => {
@@ -137,16 +155,16 @@ function WorkDetailsScreen({ route, navigation }) {
     <ScrollView>
     <Card containerStyle={{borderRadius: 5, borderColor: 'cornflowerblue'}}>
       <View style={{flex:1, flexDirection: 'row'}}>
-        <Text style={{flex:0.8, padding:10, fontSize:15 }}>Pump:</Text>
-        <Text style={{flex:1, padding:10, fontSize:15, fontWeight:'bold' }}>{work.pumpName}</Text>
+        <Text style={styles.pumpOperatorLabel}>Pump:</Text>
+        <Text style={styles.valueText}>{work.pumpName}</Text>
         <View style={{flex:1, alignItems: 'flex-end'}}>
             <AssignPumpOverlay actionName={updatePumpDetails} />
         </View>
       </View>
       <Divider />
       <View style={{flex:1, flexDirection: 'row'}}>
-        <Text style={{flex:0.8, padding:10, fontSize:15 }}>Operator:</Text>
-        <Text style={{flex:1, padding:10, fontSize:15, fontWeight:'bold' }}>{work.operatorName}</Text>
+        <Text style={styles.pumpOperatorLabel}>Operator:</Text>
+        <Text style={styles.valueText}>{work.operatorName}</Text>
         <View style={{flex:1, alignItems: 'flex-end'}}>
             <AssignStaffOverlay actionName={updateOperatorDetails} />
         </View>
@@ -156,13 +174,13 @@ function WorkDetailsScreen({ route, navigation }) {
       <Card containerStyle={{borderRadius: 5, borderColor: 'orange'}}>
           <View style={{flex: 1, flexDirection: 'row'}}>
             <View style={{flex:1}}>
-              <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold', color: 'green' }}>Petrol</Text>
+              <Text style={styles.valueTextGreen}>Petrol</Text>
             </View>
             <View style={{flex: 1, alignItems: 'flex-start'}}>
               <ReadingOverlay fuelType={PETROL} readingType={OPENING_READING} update={updateReading} headerLabel='Petrol Reading' inputLabel='Opening' value={parseInt(fuelDetails.petrolOpening)}/>
             </View>
             <View style={{flex:1}}>
-              <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>Diesel</Text>
+              <Text style={styles.valueText}>Diesel</Text>
             </View>
             <View style={{flex: 1, alignItems: 'flex-start'}}>
               <ReadingOverlay fuelType={DIESEL} readingType={OPENING_READING} update={updateReading} headerLabel='Diesel Reading' inputLabel='Opening' value={parseInt(fuelDetails.dieselOpening)}/>
@@ -170,10 +188,10 @@ function WorkDetailsScreen({ route, navigation }) {
           </View>
           <Divider />
           <View style={{flex:1, flexDirection: 'row'}}>
-            <Text style={{flex: 1, padding: 10, fontSize:15 }}>Opening: </Text>
-            <Text style={{flex: 1, padding: 10,fontSize:15, fontWeight: 'bold', color: 'green'}}>{fuelDetails.petrolOpening}</Text>
-            <Text style={{flex: 1, padding: 10, fontSize:15 }}>Opening: </Text>
-            <Text style={{flex: 1, padding: 10,fontSize:15, fontWeight: 'bold'}}>{fuelDetails.dieselOpening}</Text>
+            <Text style={styles.labelText}>Opening: </Text>
+            <Text style={styles.valueTextGreen}>{fuelDetails.petrolOpening}</Text>
+            <Text style={styles.labelText}>Opening: </Text>
+            <Text style={styles.valueText}>{fuelDetails.dieselOpening}</Text>
           </View>
       </Card>
       {
@@ -187,52 +205,52 @@ function WorkDetailsScreen({ route, navigation }) {
         <>
           <Card containerStyle={{borderRadius: 5, borderColor: 'blue'}}>
               <View style={{flex:1, flexDirection: 'row'}}>
-                <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>Oils:</Text>
+                <Text style={styles.valueText}>Oils:</Text>
                 <View style={{flex:1}} alignItems='flex-end'>
                   <OilCountOverlay update={updateOilPacketCount} value={oilDetails.packetCount}/>
                 </View>
               </View>
               <Card.Divider/>
               <View style={{flex:1, flexDirection: 'row'}}>
-                <Text style={{flex:1, padding: 10, fontSize:15 }}>Packets:</Text>
-                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{oilDetails.packetCount}</Text>
-                <Text style={{flex:1, padding: 10, fontSize:15 }}>Amount:</Text>
-                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{oilDetails.packetAmount}</Text>
+                <Text style={styles.labelText}>Packets:</Text>
+                <Text style={styles.valueText}>{oilDetails.packetCount}</Text>
+                <Text style={styles.labelText}>Amount:</Text>
+                <Text style={styles.valueText}>{oilDetails.packetAmount}</Text>
               </View>
             </Card>
 
             <Card containerStyle={{borderRadius: 5, borderColor: 'green'}}>
               <View style={{flex:1, flexDirection: 'row'}}>
-                <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>Safe Drops:</Text>
+                <Text style={styles.valueText}>Safe Drops:</Text>
                 <View style={{flex:1}} alignItems='flex-end'>
                   <SafedropCountOverlay update={updateSafedropCount} value={safeDropDetails.safeDropCount}/>
                 </View>
               </View>
               <Card.Divider/>
               <View style={{flex:1, flexDirection: 'row'}}>
-                <Text style={{flex:1, padding: 10, fontSize:15 }}>Count:</Text>
-                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{safeDropDetails.safeDropCount}</Text>
-                <Text style={{flex:1, padding: 10, fontSize:15 }}>Amount:</Text>
-                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{safeDropDetails.safeDropAmount}</Text>
+                <Text style={styles.labelText}>Count:</Text>
+                <Text style={styles.valueText}>{safeDropDetails.safeDropCount}</Text>
+                <Text style={styles.labelText}>Amount:</Text>
+                <Text style={styles.valueText}>{safeDropDetails.safeDropAmount}</Text>
               </View>
               <View style={{flex:1, flexDirection: 'row'}}>
-                <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>Last Drop:</Text>
+                <Text style={styles.valueText}>Last Drop:</Text>
                 <View style={{flex:1}} alignItems='flex-end'>
                   <LastDropOverlay update={updateLastDrop} value={lastDropDetails}/>
                 </View>
               </View>
               <Card.Divider/>
               <View style={{flex:1, flexDirection: 'row'}}>
-                <Text style={{flex:1, padding: 10, fontSize:15 }}>Last Cash:</Text>
-                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{lastDropDetails.lastCash}</Text>
-                <Text style={{flex:1, padding: 10, fontSize:15 }}>Card:</Text>
-                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{lastDropDetails.card}</Text>
+                <Text style={styles.labelText}>Last Cash:</Text>
+                <Text style={styles.valueText}>{lastDropDetails.lastCash}</Text>
+                <Text style={styles.labelText}>Card:</Text>
+                <Text style={styles.valueText}>{lastDropDetails.card}</Text>
               </View>
               <View style={{flex:1, flexDirection: 'row'}}>
-                <Text style={{flex:1, padding: 10, fontSize:15 }}>UPI:</Text>
-                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{lastDropDetails.upi}</Text>
-                <Text style={{flex:1, padding: 10, fontSize:15 }}>Credit:</Text>
-                <Text style={{flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>{lastDropDetails.credit}</Text>
+                <Text style={styles.labelText}>UPI:</Text>
+                <Text style={styles.valueText}>{lastDropDetails.upi}</Text>
+                <Text style={styles.labelText}>Credit:</Text>
+                <Text style={styles.valueText}>{lastDropDetails.credit}</Text>
               </View>
             </Card>
         </>
@@ -241,10 +259,33 @@ function WorkDetailsScreen({ route, navigation }) {
       {
         (work.status == 'A' ||  work.status == 'I') &&
         <>
+          <Card containerStyle={{borderRadius: 5, borderColor: 'orange'}}>
+            <View style={{flex: 1, flexDirection: 'row'}}>
+              <View style={{flex:1}}>
+                <Text style={styles.valueTextGreen}>Petrol</Text>
+              </View>
+              <View style={{flex: 1, alignItems: 'flex-start'}}>
+                <ReadingOverlay fuelType={PETROL} readingType={UGT_READING} update={updateReading} headerLabel='Petrol UGT' inputLabel='Ugt (ltrs)' value={parseInt(fuelDetails.petrolUgt)}/>
+              </View>
+              <View style={{flex:1}}>
+                <Text style={styles.valueText}>Diesel</Text>
+              </View>
+              <View style={{flex: 1, alignItems: 'flex-start'}}>
+                <ReadingOverlay fuelType={DIESEL} readingType={UGT_READING} update={updateReading} headerLabel='Diesel UGT' inputLabel='Ugt (ltrs)' value={parseInt(fuelDetails.dieselUgt)}/>
+              </View>
+            </View>
+            <Divider />
+            <View style={{flex:1, flexDirection: 'row'}}>
+              <Text style={styles.labelText}>Ugt: </Text>
+              <Text style={styles.valueTextGreen}>{fuelDetails.petrolUgt}</Text>
+              <Text style={styles.labelText}>Ugt: </Text>
+              <Text style={styles.valueText}>{fuelDetails.dieselUgt}</Text>
+            </View>
+          </Card>
           <Card containerStyle={{borderRadius: 5, borderColor: 'red'}}>
           <View style={{flex: 1, flexDirection: 'row'}}>
             <View style={{flex:1}}>
-              <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold', color: 'green' }}>Petrol</Text>
+              <Text style={styles.valueTextGreen}>Petrol</Text>
             </View>
             <View style={{flex: 1, alignItems: 'flex-start'}}>
               <ReadingOverlay fuelType={PETROL} 
@@ -256,7 +297,7 @@ function WorkDetailsScreen({ route, navigation }) {
               />
             </View>
             <View style={{flex:1}}>
-              <Text style={{ flex:1, padding: 10, fontSize:15, fontWeight:'bold' }}>Diesel</Text>
+              <Text style={styles.valueText}>Diesel</Text>
             </View>
             <View style={{flex: 1, alignItems: 'flex-start'}}>
               <ReadingOverlay fuelType={DIESEL} readingType={CLOSING_READING} update={updateReading} headerLabel='Diesel Reading' inputLabel='Closing' value={fuelDetails.dieselClosing}/>
@@ -264,10 +305,10 @@ function WorkDetailsScreen({ route, navigation }) {
           </View>
           <Divider />
           <View style={{flex:1, flexDirection: 'row'}}>
-            <Text style={{flex: 1, padding: 10, fontSize:15 }}>Closing: </Text>
-            <Text style={{flex: 1, padding: 10,fontSize:15, fontWeight: 'bold', color: 'green'}}>{fuelDetails.petrolClosing}</Text>
-            <Text style={{flex: 1, padding: 10, fontSize:15 }}>Closing: </Text>
-            <Text style={{flex: 1, padding: 10,fontSize:15, fontWeight: 'bold'}}>{fuelDetails.dieselClosing}</Text>
+            <Text style={styles.labelText}>Closing: </Text>
+            <Text style={styles.valueTextGreen}>{fuelDetails.petrolClosing}</Text>
+            <Text style={styles.labelText}>Closing: </Text>
+            <Text style={styles.valueText}>{fuelDetails.dieselClosing}</Text>
           </View>
         </Card>
           {
@@ -308,5 +349,31 @@ function WorkDetailsScreen({ route, navigation }) {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  labelText: {
+    flex: 1, 
+    padding: 10, 
+    fontSize:15
+  },
+  valueText: {
+    flex: 1, 
+    padding: 10, 
+    fontSize:15,
+    fontWeight: 'bold'
+  },
+  valueTextGreen: {
+    flex:1, 
+    padding: 10, 
+    fontSize:15, 
+    fontWeight:'bold', 
+    color: 'green'
+  },
+  pumpOperatorLabel: {
+    flex:0.8, 
+    padding:10, 
+    fontSize:15
+  }
+})
 
 export default WorkDetailsScreen;

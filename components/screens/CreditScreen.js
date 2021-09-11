@@ -1,70 +1,133 @@
-import React, {useState} from 'react';
-import { View, Text, ScrollView } from 'react-native';
-import { ListItem, Avatar, Divider, Icon, SearchBar, Button, Overlay, Input } from 'react-native-elements';
+import React, {useState, useEffect} from 'react';
+import { RefreshControl, ScrollView, View, Alert } from 'react-native';
+import { Text, Card, ListItem, Input, Avatar, Badge, SpeedDial, Divider, Button, SearchBar, Overlay } from 'react-native-elements';
 
-const list = [
-  {
-    name: 'Amy Farha',
-    mobile: '9978645342',
-    subtitle: '5500'
-  },
-  {
-    name: 'Chris Jackson',
-    mobile: '9978645342',
-    subtitle: '3456'
-  },
-  {
-    name: 'Amy Farha',
-    mobile: '9978645342',
-    subtitle: '12345'
-  },
-  {
-    name: 'Chris Jackson',
-    mobile: '9978645342',
-    subtitle: '10000'
-  },
-  {
-    name: 'Amy Farha',
-    mobile: '9978645342',
-    subtitle: '12000'
-  }
-]
-function CreditScreen({ navigation }) {
+const wait = (timeout) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
+function CreditScreen({ navigation, route }) {
   const [search, setSearch] = useState('');
   const [visibleForm, setVisibleForm] = useState(false);
-
+  const [creditUsers,setCreditUsers] = useState([]);
+  const [open,setOpen] = useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [userDetails, setUserDetails] = useState({
+    userName:'',
+    userMobileNumber: '',
+    balance: parseInt(0)
+  })
+  const [editUser, setEditUser] = useState(false);
+ 
   updateSearch = (search) => {
     setSearch(search);
   }
   const toggleAddCreditUserOverlay = () => {
     setVisibleForm(!visibleForm);
   };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
+  const addCreditUser = () => {
+    creditUsers.push(userDetails)
+    toggleAddCreditUserOverlay();
+    setOpen(!open);
+  };
+
+  const updateCreditUser = () => {
+    console.log(userDetails);
+    toggleAddCreditUserOverlay();
+  };
+  
+
+  const onEditUser = () => {
+    setEditUser(true);
+    toggleAddCreditUserOverlay()
+  }
+
+  useEffect(()=>{
+    if (route.params?.work) {
+      const{work} = route.params;
+      let nameArray = workList.map(item => {
+        return item.name;
+      });
+      if(!nameArray.includes(work.name)){
+        workList.push(work);
+        setWorkList(workList);
+        setOpen(!open);
+      }
+    }
+  }, [route.params?.work]);
+
+  const deleteUser = (workName) => {
+    Alert.alert(
+      "Delete User",
+      "Are you sure to delete this user ?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => {
+            var filteredWorkList = workList.filter(function(work, index, arr){
+              return work.name != workName;
+            });
+            setWorkList(filteredWorkList);
+        } }
+      ]
+    );
+  }
+
   return (
+    <View style={{flex:1}}>
+    {
+      creditUsers.length == 0 &&
+      <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
+        <Text style={{color:'#3a414e', fontSize:18, fontWeight:'bold'}}> 
+            No credit users
+        </Text>
+        <Text style={{color:'#3a414e', fontSize:15, fontWeight:'bold'}}> 
+            Click + below to add credit user
+        </Text>
+      </View>
+    }
+    
+    <ScrollView 
+      style={{flex:1}}
+      refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+    >
+    <Overlay overlayStyle={{height: 280, width: 350, borderRadius: 10}} isVisible={visibleForm} onBackdropPress={toggleAddCreditUserOverlay} supportedOrientations={['portrait', 'landscape']}>
+          <ScrollView style={{flex: 1}}>
+            <Text style={{flex:0.9, padding: 5, fontSize:15, fontWeight:'bold' }}>Credit User:</Text>
+            <Input label='Name' onChangeText={name => setUserDetails({...userDetails, userName:name})} value={userDetails.userName.toString()}/>
+            <Input label='Mobile' maxLength={10} onChangeText={mobileNumber => setUserDetails({...userDetails, userMobileNumber: mobileNumber})} keyboardType='numeric' value={userDetails.userMobileNumber.toString()}/>
+            <Button title={editUser ? 'Save':'Add'} onPress={editUser ? updateCreditUser:addCreditUser}/>
+          </ScrollView>
+      </Overlay>
+  {
+    creditUsers.length > 0 &&
     <View>
-    <View style={{flexDirection:'row'}}>
-      <View style={{flex:3.5}}>
-      <SearchBar
+    <SearchBar
         placeholder="Type Here..."
         onChangeText={updateSearch}
         value={search}
         lightTheme = 'false'
         round = 'true'
       />
-      </View>
-      <View style={{flex: 1, paddingTop: 10}}>
-        <Button icon={{name: 'add-circle', type:'ionicon', size: 30, color: "dodgerblue"}} type='clear' onPress={toggleAddCreditUserOverlay}/>
-        <Overlay overlayStyle={{height: 280, width: 350, borderRadius: 10}} isVisible={visibleForm} onBackdropPress={toggleAddCreditUserOverlay} supportedOrientations={['portrait', 'landscape']}>
-          <ScrollView style={{flex: 1}}>
-            <Text style={{flex:0.9, padding: 10, fontSize:15, fontWeight:'bold' }}>Add:</Text>
-            <Input label='Name'/>
-            <Input label='Mobile'/>
-            <Button title='Add' onPress={toggleAddCreditUserOverlay}/>
-          </ScrollView>
-        </Overlay>
-      </View>
     </View>
-  {
-    list.map((l, i) => (
+  }
+     
+   {
+    creditUsers.map((l, i) => (
       <ListItem key={i} bottomDivider onPress={()=>{
         navigation.navigate('CreditDetails', {
           credit: l
@@ -72,14 +135,35 @@ function CreditScreen({ navigation }) {
       }}>
         <Avatar rounded source={require('../../images/user.png')} icon={{name: 'person', type: 'ionicon'}}/>
         <ListItem.Content>
-          <ListItem.Title>{l.name}</ListItem.Title>
-          <ListItem.Subtitle>Balance: {l.subtitle}</ListItem.Subtitle>
-          <ListItem.Subtitle>Mobile: {l.mobile}</ListItem.Subtitle>
+          <ListItem.Title>{l.userName}</ListItem.Title>
+          <Text style={{color:'#3a414e', fontSize:13}}> 
+            Balance: {l.balance}
+          </Text>
+          <Text style={{color:'#3a414e', fontSize:13}}> 
+            Mobile: {l.userMobileNumber}
+          </Text>
         </ListItem.Content>
+        <Button icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} type='clear' onPress={onEditUser}/>
         <ListItem.Chevron />
       </ListItem>
     ))
   }
+  
+  
+</ScrollView>
+    <SpeedDial
+      isOpen={open}
+      icon={{ name: 'add', color: '#fff' }}
+      openIcon={{ name: 'close', color: '#fff' }}
+      onOpen={() => setOpen(!open)}
+      onClose={() => setOpen(!open)}
+    >
+      <SpeedDial.Action
+        icon={{ name: 'add', color: '#fff' }}
+        title="Add"
+        onPress={toggleAddCreditUserOverlay}
+      />
+    </SpeedDial>
 </View>
   );
 }
