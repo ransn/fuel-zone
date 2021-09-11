@@ -3,7 +3,6 @@ import { View, Text } from 'react-native';
 import { Button, Overlay, Input } from 'react-native-elements';
 
 function ReadingOverlay(props, { navigation }) {
-  console.log(props)
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [reading, setReading] = useState(props.value);
   const toggleOverlay = () => {
