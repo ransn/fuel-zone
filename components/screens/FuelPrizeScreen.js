@@ -6,8 +6,6 @@ function FuelPrizeScreen({navigation}){
     const [petrolPrize, setPetrolPrize] = useState('105.25');
     const [dieselPrize, setDieselPrize] = useState('103.23');
     const savePrize = () => {
-        console.log(petrolPrize);
-        console.log(dieselPrize);
         navigation.navigate('Settings');
     }
     return(

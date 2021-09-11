@@ -38,7 +38,6 @@ function CreditScreen({ navigation, route }) {
   };
 
   const updateCreditUser = () => {
-    console.log(userDetails);
     toggleAddCreditUserOverlay();
   };
   

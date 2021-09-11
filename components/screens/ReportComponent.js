@@ -3,7 +3,6 @@ import { View, ScrollView } from "react-native";
 import { Card, Text, Divider } from "react-native-elements";
 function ReportComponent(props){
     const work = props.value;
-    console.log(work);
     const {petrolOpening, petrolClosing, 
             dieselOpening, dieselClosing, 
             petrolUgt, dieselUgt} = work.fuelDetails;

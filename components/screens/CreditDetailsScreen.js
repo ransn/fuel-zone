@@ -91,7 +91,6 @@ function CreditDetailsScreen({ route, navigation }) {
           </View>
         </ListItem.Content>
         <Button icon={{name: 'trash', type:'ionicon', size: 20, color: "dodgerblue"}} type='clear' onPress={() => {
-          console.log(i);
         }}/>
       </ListItem>
     ))
