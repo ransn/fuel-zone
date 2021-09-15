@@ -1,52 +1,65 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import { View, ScrollView } from "react-native";
 import { Card, Text, Divider } from "react-native-elements";
+//import PriceContext from "../PriceContext";
 function ReportComponent(props){
-    const work = props.value;
+    //const priceDetails = useContext(PriceContext);
+    const report = props.value;
+    console.log(report);
     const {petrolOpening, petrolClosing, 
             dieselOpening, dieselClosing, 
-            petrolUgt, dieselUgt} = work.fuelDetails;
-    const {packetCount, packetAmount} = work.oilDetails;
-    const petrolLiters = petrolClosing - petrolOpening;
-    const petrolAmt = petrolLiters*105.23;
-    const dieselLiters = dieselClosing - dieselOpening;
-    const dieselAmt = dieselLiters*105;
-    const salesTotal = petrolAmt+dieselAmt+packetAmount;
-    const petrolUgtAmt = petrolUgt*105.23;
-    const dieselUgtAmt = dieselUgt*105;
+            petrolUgt, dieselUgt} = report.fuelDetails;
+    const {packetCount} = report.oilDetails;
+    const {safeDropCount} = report.safeDropDetails;
+    const {lastCash, card, upi, credit} = report.lastDropDetails;
+    const {petrolLiters, dieselLiters,
+            petrolAmount, dieselAmount,
+            oilAmount, petrolUgtAmount,
+            dieselUgtAmount, safeDropAmount,
+            salesTotal, returnsTotal,
+            difference 
+          } = report.calculatedReport;
+    // const petrolLiters = petrolClosing - petrolOpening;
+    // const petrolAmt = petrolLiters*priceDetails.petrol;
+    // const dieselLiters = dieselClosing - dieselOpening;
+    // const dieselAmt = dieselLiters*priceDetails.diesel;
+    // const packetAmt = packetCount*priceDetails.oil;
+    // const salesTotal = petrolAmt+dieselAmt+packetAmt;
+    // const petrolUgtAmt = petrolUgt*priceDetails.petrol;
+    // const dieselUgtAmt = dieselUgt*priceDetails.diesel;
 
-    // Returns
+    // // Returns
 
-    const {safeDropCount, safeDropAmount} = work.safeDropDetails;
-    const {lastCash, card, upi, credit} = work.lastDropDetails;
+    // const {safeDropCount, safeDropAmount} = work.safeDropDetails;
+    // const {lastCash, card, upi, credit} = work.lastDropDetails;
 
-    const returnsTotal = parseInt(safeDropAmount)+
-                        parseInt(lastCash)+
-                        parseInt(card)+
-                        parseInt(upi)+
-                        parseInt(credit)-
-                        parseInt(petrolUgtAmt)-
-                        parseInt(dieselUgtAmt);
-    const difference = salesTotal - returnsTotal;
+    // const returnsTotal = parseInt(safeDropAmount)+
+    //                     parseInt(lastCash)+
+    //                     parseInt(card)+
+    //                     parseInt(upi)+
+    //                     parseInt(credit)-
+    //                     parseInt(petrolUgtAmt)-
+    //                     parseInt(dieselUgtAmt);
+    // const difference = salesTotal - returnsTotal;
     return(
         <Card>
             <Card.Title>Summary</Card.Title>
             <View style={{flex:1, flexDirection:'row'}}>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Petrol(105.23)</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Petrol()</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Liters: {petrolLiters}</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {petrolAmt.toFixed(2)}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {petrolAmount.toFixed(2)}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Diesel(105)</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Diesel()</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Liters: {dieselLiters}</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {dieselAmt.toFixed(2)}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {dieselAmount.toFixed(2)}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Oil(20)</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Oil()</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Count: {packetCount}</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {packetAmount}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {oilAmount}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
@@ -60,13 +73,13 @@ function ReportComponent(props){
              <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>UGT(In Ltrs)</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Petrol: {petrolUgt}</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12, color:'red'}}>Amt: {petrolUgtAmt}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12, color:'red'}}>Amt: {petrolUgtAmount.toFixed(2)}</Text>
             </View>
              <Divider />
              <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>UGT(In Ltrs)</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Diesel: {dieselUgt}</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12, color:'red'}}>Amt: {dieselUgtAmt}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12, color:'red'}}>Amt: {dieselUgtAmount.toFixed(2)}</Text>
             </View>
              <Divider />
             <View style={{flex:1, flexDirection:'row'}}>

@@ -10,6 +10,7 @@ function CreditScreen({ navigation, route }) {
   const [search, setSearch] = useState('');
   const [visibleForm, setVisibleForm] = useState(false);
   const [creditUsers,setCreditUsers] = useState([]);
+  const [filteredUsers,setFilteredUsers] = useState([]);
   const [open,setOpen] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
   const [userDetails, setUserDetails] = useState({
@@ -19,11 +20,20 @@ function CreditScreen({ navigation, route }) {
   })
   const [editUser, setEditUser] = useState(false);
  
-  updateSearch = (search) => {
-    setSearch(search);
+  updateSearch = (query) => {
+    setSearch(query);
+    if(query.length > 0){
+      var filteredUsersList = creditUsers.filter(function(user, index, arr){
+        return user.userName.toUpperCase().includes(query.toUpperCase());
+      });
+      setFilteredUsers(filteredUsersList);
+    }else{
+      setFilteredUsers(creditUsers);
+    }
   }
   const toggleAddCreditUserOverlay = () => {
     setVisibleForm(!visibleForm);
+    setOpen(!visibleForm);
   };
 
   const onRefresh = React.useCallback(() => {
@@ -33,17 +43,28 @@ function CreditScreen({ navigation, route }) {
 
   const addCreditUser = () => {
     creditUsers.push(userDetails)
+    setCreditUsers(creditUsers);
+    setFilteredUsers(creditUsers);
     toggleAddCreditUserOverlay();
-    setOpen(!open);
   };
 
   const updateCreditUser = () => {
     toggleAddCreditUserOverlay();
   };
   
+  const onCreateUser = () => {
+    setEditUser(false);
+    setUserDetails({
+      userName:'',
+      userMobileNumber: '',
+      balance: parseInt(0)
+    });
+    toggleAddCreditUserOverlay()
+  }
 
-  const onEditUser = () => {
+  const onEditUser = (user) => {
     setEditUser(true);
+    setUserDetails(user);
     toggleAddCreditUserOverlay()
   }
 
@@ -107,8 +128,14 @@ function CreditScreen({ navigation, route }) {
     <Overlay overlayStyle={{height: 280, width: 350, borderRadius: 10}} isVisible={visibleForm} onBackdropPress={toggleAddCreditUserOverlay} supportedOrientations={['portrait', 'landscape']}>
           <ScrollView style={{flex: 1}}>
             <Text style={{flex:0.9, padding: 5, fontSize:15, fontWeight:'bold' }}>Credit User:</Text>
-            <Input label='Name' onChangeText={name => setUserDetails({...userDetails, userName:name})} value={userDetails.userName.toString()}/>
-            <Input label='Mobile' maxLength={10} onChangeText={mobileNumber => setUserDetails({...userDetails, userMobileNumber: mobileNumber})} keyboardType='numeric' value={userDetails.userMobileNumber.toString()}/>
+            <Input label='Name' 
+                onChangeText={name => setUserDetails({...userDetails, userName:name})} 
+                value={userDetails.userName.toString()}/>
+            <Input label='Mobile' 
+                maxLength={10} 
+                onChangeText={mobileNumber => setUserDetails({...userDetails, userMobileNumber: mobileNumber})} 
+                keyboardType='numeric' 
+                value={userDetails.userMobileNumber.toString()}/>
             <Button title={editUser ? 'Save':'Add'} onPress={editUser ? updateCreditUser:addCreditUser}/>
           </ScrollView>
       </Overlay>
@@ -116,8 +143,8 @@ function CreditScreen({ navigation, route }) {
     creditUsers.length > 0 &&
     <View>
     <SearchBar
-        placeholder="Type Here..."
-        onChangeText={updateSearch}
+        placeholder="Type Name..."
+        onChangeText={text => updateSearch(text)}
         value={search}
         lightTheme = 'false'
         round = 'true'
@@ -126,7 +153,7 @@ function CreditScreen({ navigation, route }) {
   }
      
    {
-    creditUsers.map((l, i) => (
+    filteredUsers.map((l, i) => (
       <ListItem key={i} bottomDivider onPress={()=>{
         navigation.navigate('CreditDetails', {
           credit: l
@@ -142,7 +169,7 @@ function CreditScreen({ navigation, route }) {
             Mobile: {l.userMobileNumber}
           </Text>
         </ListItem.Content>
-        <Button icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} type='clear' onPress={onEditUser}/>
+        <Button icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} type='clear' onPress={()=>{onEditUser(l)}}/>
         <ListItem.Chevron />
       </ListItem>
     ))
@@ -160,7 +187,7 @@ function CreditScreen({ navigation, route }) {
       <SpeedDial.Action
         icon={{ name: 'add', color: '#fff' }}
         title="Add"
-        onPress={toggleAddCreditUserOverlay}
+        onPress={onCreateUser}
       />
     </SpeedDial>
 </View>

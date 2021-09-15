@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { StyleSheet, View, Image, ScrollView } from 'react-native';
 import { Card, Divider, Button, Text, Overlay } from 'react-native-elements';
 import ReportComponent from "./ReportComponent";
@@ -8,13 +8,16 @@ import ReadingOverlay from "./ReadingOverlay";
 import OilCountOverlay from "./OilCountOverlay";
 import SafedropCountOverlay from "./SafedropCountOverlay";
 import LastDropOverlay from "./LastDropOverlay";
+import PriceContext from "../PriceContext"
 
 function WorkDetailsScreen({ route, navigation }) {
+  const priceDetails = useContext(PriceContext);
   const initialWork = {
     name: '',
     status: 'N',
     pumpName: '',
-    operatorName: ''
+    operatorName: '',
+    timestamp:''
   };
   const [work, setWork] = useState(initialWork);
   const [status, setStatus] = useState('N');
@@ -24,11 +27,13 @@ function WorkDetailsScreen({ route, navigation }) {
       const name = route.params.workName;
       let updatedWork = work;
       updatedWork.name = name;
+      updatedWork.timestamp = new Date().getDate();
       setWork(updatedWork);
       navigation.setOptions({title: work.name});
     }
     else if(route.params?.workItem){
       setWork(route.params.workItem);
+      console.log(route.params.workItem);
       navigation.setOptions({title: work.name});
     }
 
@@ -43,18 +48,29 @@ function WorkDetailsScreen({ route, navigation }) {
     dieselUgt: parseInt(0)
   });
   const [oilDetails, setOilDetails] = useState({
-    packetCount: parseInt(0),
-    packetAmount: parseInt(0)
+    packetCount: parseInt(0)
   });
   const [safeDropDetails, setSafeDropDetails] = useState({
-    safeDropCount: parseInt(0),
-    safeDropAmount: parseInt(0)
+    safeDropCount: parseInt(0)
   });
   const [lastDropDetails, setLastDropDetails] = useState({
     lastCash: parseInt(0),
     card: parseInt(0),
     upi: parseInt(0),
     credit: parseInt(0)
+  });
+  const [calculatedReport, setCalculatedReport] = useState({
+    petrolLiters: 0,
+    dieselLiters: 0,
+    petrolAmount: 0,
+    dieselAmount: 0,
+    oilAmount: 0,
+    petrolUgtAmount: 0,
+    dieselUgtAmount: 0,
+    safeDropAmount: 0,
+    salesTotal: 0,
+    returnsTotal: 0,
+    difference: 0
   });
   const [calculateOverlayVisible, setCalculateOverlayVisible] = useState(false);  
   const [report, setReport] = useState({
@@ -84,12 +100,7 @@ function WorkDetailsScreen({ route, navigation }) {
     let updatedWork = work;
     updatedWork.status = 'I';
     setWork(updatedWork);
-    setReport({
-      fuelDetails: fuelDetails,
-      oilDetails: oilDetails,
-      safeDropDetails: safeDropDetails,
-      lastDropDetails: lastDropDetails
-    });
+    calculateTotal();
     navigation.navigate({
       name: 'WorkList',
       params: {work: work}
@@ -126,7 +137,7 @@ function WorkDetailsScreen({ route, navigation }) {
   }
 
   const updateOilPacketCount = (count) => {
-    setOilDetails({...oilDetails, packetCount: count, packetAmount: parseInt(count)*20});
+    setOilDetails({...oilDetails, packetCount: count});
   }
 
   const updateSafedropCount = (count) => {
@@ -141,14 +152,58 @@ function WorkDetailsScreen({ route, navigation }) {
     setLastDropDetails(lastDropDetails);
   }
 
+  const createReport = () => {
+    calculateTotal();
+    
+    toggleCalculateOverlay();
+  }
+
   const calculateTotal = () => {
+    const {petrolOpening, petrolClosing, 
+            dieselOpening, dieselClosing, 
+            petrolUgt, dieselUgt} = fuelDetails;
+    const {packetCount} = oilDetails;
+    const {safeDropCount} = safeDropDetails;
+    const petrolLiters = petrolClosing - petrolOpening;
+    const petrolAmt = petrolLiters*priceDetails.petrol;
+    const dieselLiters = dieselClosing - dieselOpening;
+    const dieselAmt = dieselLiters*priceDetails.diesel;
+    const packetAmt = packetCount*priceDetails.oil;
+    const salesTotal = petrolAmt+dieselAmt+packetAmt;
+    const petrolUgtAmt = petrolUgt*priceDetails.petrol;
+    const dieselUgtAmt = dieselUgt*priceDetails.diesel;
+    const safeDropAmount = safeDropCount*8000;
+    
+    const {lastCash, card, upi, credit} = lastDropDetails;
+    const returnsTotal = parseInt(safeDropAmount)+
+                        parseInt(lastCash)+
+                        parseInt(card)+
+                        parseInt(upi)+
+                        parseInt(credit)-
+                        parseInt(petrolUgtAmt)-
+                        parseInt(dieselUgtAmt);
+    const difference = salesTotal - returnsTotal;
+
+    setCalculatedReport({...calculatedReport,
+      petrolLiters: petrolLiters,
+      dieselLiters: dieselLiters, 
+      petrolAmount: petrolAmt,
+      dieselAmount: dieselAmt,
+      oilAmount: packetAmt,
+      petrolUgtAmount: petrolUgtAmt,
+      dieselUgtAmount: dieselUgtAmt,
+      safeDropAmount: safeDropAmount,
+      salesTotal: salesTotal,
+      returnsTotal: returnsTotal,
+      difference: difference
+    });
     setReport({
       fuelDetails: fuelDetails,
       oilDetails: oilDetails,
       safeDropDetails: safeDropDetails,
-      lastDropDetails: lastDropDetails
+      lastDropDetails: lastDropDetails,
+      calculatedReport: calculatedReport
     });
-    toggleCalculateOverlay();
   }
 
   return (
@@ -205,7 +260,7 @@ function WorkDetailsScreen({ route, navigation }) {
         <>
           <Card containerStyle={{borderRadius: 5, borderColor: 'blue'}}>
               <View style={{flex:1, flexDirection: 'row'}}>
-                <Text style={styles.valueText}>Oils:</Text>
+                <Text style={styles.valueText}>Oils ({priceDetails.oil}Rs):</Text>
                 <View style={{flex:1}} alignItems='flex-end'>
                   <OilCountOverlay update={updateOilPacketCount} value={oilDetails.packetCount}/>
                 </View>
@@ -215,7 +270,7 @@ function WorkDetailsScreen({ route, navigation }) {
                 <Text style={styles.labelText}>Packets:</Text>
                 <Text style={styles.valueText}>{oilDetails.packetCount}</Text>
                 <Text style={styles.labelText}>Amount:</Text>
-                <Text style={styles.valueText}>{oilDetails.packetAmount}</Text>
+                <Text style={styles.valueText}>{priceDetails.oil*oilDetails.packetCount}</Text>
               </View>
             </Card>
 
@@ -318,7 +373,7 @@ function WorkDetailsScreen({ route, navigation }) {
               <View style={{flex: 1, padding: 10}}>
                 <Button buttonStyle={{borderRadius:20}} 
                         title='Calculate Total' 
-                        onPress={calculateTotal}
+                        onPress={createReport}
                         disabled={(fuelDetails.petrolClosing == 0 || fuelDetails.dieselClosing == 0) ? true : false}        
                 />
                 <Overlay overlayStyle={{height: 350, width: 370, borderRadius: 10}} isVisible={calculateOverlayVisible} onBackdropPress={toggleCalculateOverlay} supportedOrientations={['portrait', 'landscape']}>

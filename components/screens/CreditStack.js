@@ -8,7 +8,7 @@ function CreditStack() {
      return (
       <StaffScreensStack.Navigator>
         <StaffScreensStack.Screen name="CreditList" component={CreditScreen} options={{title: 'Credits'}}/>
-        <StaffScreensStack.Screen name="CreditDetails" component={CreditDetailsScreen}/>
+        <StaffScreensStack.Screen name="CreditDetails" component={CreditDetailsScreen} options={{title: 'Credit Details'}}/>
       </StaffScreensStack.Navigator>
   );
 }

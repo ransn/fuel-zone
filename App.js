@@ -10,11 +10,19 @@ import PumpStack from "./components/screens/PumpStack";
 import CreditStack from "./components/screens/CreditStack";
 import SettingsStack from "./components/screens/SettingsStack";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import PriceContext from "./components/PriceContext";
+
 const Tab = createBottomTabNavigator();
 function App() {
   const scheme = useColorScheme();
+  let priceDetails = {
+    petrol: 106,
+    diesel: 103.26,
+    oil: 19
+  }
   return (
     <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <PriceContext.Provider value={priceDetails}>
       <Tab.Navigator initialRouteName="Dashboard">
         <Tab.Screen name="Dashboard" component={HomeScreen} options={{
           tabBarLabel: 'Home', tabBarIcon: () => (
@@ -57,6 +65,7 @@ function App() {
           ) 
         }}/>
     </Tab.Navigator>
+    </PriceContext.Provider>
     </NavigationContainer>
   );
 }

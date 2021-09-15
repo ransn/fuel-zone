@@ -32,11 +32,25 @@ function WorkReportScreen({ route, navigation }) {
     upi: parseInt(0),
     credit: parseInt(0)
   });
+  const [calculatedReport, setCalculatedReport] = useState({
+    petrolLiters: 0,
+    dieselLiters: 0,
+    petrolAmount: 0,
+    dieselAmount: 0,
+    oilAmount: 0,
+    petrolUgtAmount: 0,
+    dieselUgtAmount: 0,
+    safeDropAmount: 0,
+    salesTotal: 0,
+    returnsTotal: 0,
+    difference: 0
+  });
   const [report, setReport] = useState({
     fuelDetails: fuelDetails,
     oilDetails: oilDetails,
     safeDropDetails: safeDropDetails,
-    lastDropDetails: lastDropDetails
+    lastDropDetails: lastDropDetails,
+    calculatedReport: calculatedReport
   })
   return (
     <ScrollView>

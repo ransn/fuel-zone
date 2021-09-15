@@ -1,26 +1,93 @@
 {
-    "name": "",
-    "pumpName": "",
-    "operatorName": "",
-    "status": "N",
-    "fuelDetails":{
-        "petrolOpening": 0,
-        "petrolClosing": 0,
-        "dieselOpening": 0,
-        "dieselClosing": 0
-      },
-    "oilDetails":{
-        "packetCount": 0,
-        "packetAmount": 0
-      },
-    "safeDropDetails":{
-        "safeDropCount": 0,
-        "safeDropAmount": 0
-      },
-    "lastDropDetails":{
-        "lastCash": 0,
-        "card": 0,
-        "upi": 0,
-        "credit": 0
-      }
+  "works": {
+    "work1": {
+      "pumpName": "",
+      "operatorName": "",
+      "status": "N",
+      "timestamp": ""
+    },
+    "work2": {
+      "pumpName": "",
+      "operatorName": "",
+      "status": "N",
+      "timestamp":""
+    }    
+  },
+  "fuelDetails": {
+    "work1": {
+      "petrolOpening": 0,
+      "petrolClosing": 0,
+      "dieselOpening": 0,
+      "dieselClosing": 0,
+      "petrolUgt": 0,
+      "dieselUgt": 0
+    },
+    "work2": {
+      "petrolOpening": 0,
+      "petrolClosing": 0,
+      "dieselOpening": 0,
+      "dieselClosing": 0,
+      "petrolUgt": 0,
+      "dieselUgt": 0
+    }
+  },
+  "oilDetails":{
+    "work1": {
+      "packetCount": 0
+    },
+    "work2": {
+      "packetCount": 0
+    }
+  },
+  "safeDropDetails":{
+    "work1":{
+      "safeDropCount": 0
+    },
+    "work2":{
+      "safeDropCount": 0
+    }
+  },
+  "lastDropDetails":{
+    "work1":{
+      "lastCash": 0,
+      "card": 0,
+      "upi": 0,
+      "credit": 0
+    },
+    "work2":{
+      "lastCash": 0,
+      "card": 0,
+      "upi": 0,
+      "credit": 0
+    }
+  },
+  "calculatedReport":{
+    "work1":{
+      "petrolLiters": 0,
+      "dieselLiters": 0,
+      "petrolAmount": 0,
+      "dieselAmount": 0,
+      "oilAmount": 0,
+      "petrolUgtAmount": 0,
+      "diselUgtAmount": 0,
+      "safeDropAmount": 0,
+      "salesTotal": 0,
+      "returnsTotal": 0,
+      "difference": 0
+    },
+    "work2":{
+      "petrolLiters": 0,
+      "dieselLiters": 0,
+      "petrolAmount": 0,
+      "dieselAmount": 0,
+      "oilAmount": 0,
+      "petrolUgtAmount": 0,
+      "diselUgtAmount": 0,
+      "safeDropAmount": 0,
+      "salesTotal": 0,
+      "returnsTotal": 0,
+      "difference": 0
+    }
+  }
+
 }
