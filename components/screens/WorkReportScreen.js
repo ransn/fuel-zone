@@ -13,24 +13,24 @@ function WorkReportScreen({ route, navigation }) {
   }, [work]);
 
   const [fuelDetails, setFuelDetails] = useState({
-    petrolOpening: parseInt(0),
-    petrolClosing: parseInt(0),
-    dieselOpening: parseInt(0),
-    dieselClosing: parseInt(0)
+    petrolOpening: Number(0),
+    petrolClosing: Number(0),
+    dieselOpening: Number(0),
+    dieselClosing: Number(0)
   });
   const [oilDetails, setOilDetails] = useState({
-    packetCount: parseInt(0),
-    packetAmount: parseInt(0)
+    packetCount: Number(0),
+    packetAmount: Number(0)
   });
   const [safeDropDetails, setSafeDropDetails] = useState({
-    safeDropCount: parseInt(0),
-    safeDropAmount: parseInt(0)
+    safeDropCount: Number(0),
+    safeDropAmount: Number(0)
   });
   const [lastDropDetails, setLastDropDetails] = useState({
-    lastCash: parseInt(0),
-    card: parseInt(0),
-    upi: parseInt(0),
-    credit: parseInt(0)
+    lastCash: Number(0),
+    card: Number(0),
+    upi: Number(0),
+    credit: Number(0)
   });
   const [calculatedReport, setCalculatedReport] = useState({
     petrolLiters: 0,

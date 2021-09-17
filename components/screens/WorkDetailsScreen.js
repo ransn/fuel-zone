@@ -33,31 +33,30 @@ function WorkDetailsScreen({ route, navigation }) {
     }
     else if(route.params?.workItem){
       setWork(route.params.workItem);
-      console.log(route.params.workItem);
       navigation.setOptions({title: work.name});
     }
 
   }, [work]);
 
   const [fuelDetails, setFuelDetails] = useState({
-    petrolOpening: parseInt(0),
-    petrolClosing: parseInt(0),
-    dieselOpening: parseInt(0),
-    dieselClosing: parseInt(0),
-    petrolUgt: parseInt(0),
-    dieselUgt: parseInt(0)
+    petrolOpening: Number(0),
+    petrolClosing: Number(0),
+    dieselOpening: Number(0),
+    dieselClosing: Number(0),
+    petrolUgt: Number(0),
+    dieselUgt: Number(0)
   });
   const [oilDetails, setOilDetails] = useState({
-    packetCount: parseInt(0)
+    packetCount: Number(0)
   });
   const [safeDropDetails, setSafeDropDetails] = useState({
-    safeDropCount: parseInt(0)
+    safeDropCount: Number(0)
   });
   const [lastDropDetails, setLastDropDetails] = useState({
-    lastCash: parseInt(0),
-    card: parseInt(0),
-    upi: parseInt(0),
-    credit: parseInt(0)
+    lastCash: Number(0),
+    card: Number(0),
+    upi: Number(0),
+    credit: Number(0)
   });
   const [calculatedReport, setCalculatedReport] = useState({
     petrolLiters: 0,
@@ -143,8 +142,8 @@ function WorkDetailsScreen({ route, navigation }) {
   const updateSafedropCount = (count) => {
     setSafeDropDetails({
       ...safeDropDetails,
-      safeDropCount: parseInt(count),
-      safeDropAmount: parseInt(count)*8000
+      safeDropCount: Number(count),
+      safeDropAmount: Number(count)*8000
     });
   }
 
@@ -175,13 +174,13 @@ function WorkDetailsScreen({ route, navigation }) {
     const safeDropAmount = safeDropCount*8000;
     
     const {lastCash, card, upi, credit} = lastDropDetails;
-    const returnsTotal = parseInt(safeDropAmount)+
-                        parseInt(lastCash)+
-                        parseInt(card)+
-                        parseInt(upi)+
-                        parseInt(credit)-
-                        parseInt(petrolUgtAmt)-
-                        parseInt(dieselUgtAmt);
+    const returnsTotal = Number(safeDropAmount)+
+                        Number(lastCash)+
+                        Number(card)+
+                        Number(upi)+
+                        Number(credit)-
+                        Number(petrolUgtAmt)-
+                        Number(dieselUgtAmt);
     const difference = salesTotal - returnsTotal;
 
     setCalculatedReport({...calculatedReport,
@@ -232,13 +231,13 @@ function WorkDetailsScreen({ route, navigation }) {
               <Text style={styles.valueTextGreen}>Petrol</Text>
             </View>
             <View style={{flex: 1, alignItems: 'flex-start'}}>
-              <ReadingOverlay fuelType={PETROL} readingType={OPENING_READING} update={updateReading} headerLabel='Petrol Reading' inputLabel='Opening' value={parseInt(fuelDetails.petrolOpening)}/>
+              <ReadingOverlay fuelType={PETROL} readingType={OPENING_READING} update={updateReading} headerLabel='Petrol Reading' inputLabel='Opening' value={Number(fuelDetails.petrolOpening)}/>
             </View>
             <View style={{flex:1}}>
               <Text style={styles.valueText}>Diesel</Text>
             </View>
             <View style={{flex: 1, alignItems: 'flex-start'}}>
-              <ReadingOverlay fuelType={DIESEL} readingType={OPENING_READING} update={updateReading} headerLabel='Diesel Reading' inputLabel='Opening' value={parseInt(fuelDetails.dieselOpening)}/>
+              <ReadingOverlay fuelType={DIESEL} readingType={OPENING_READING} update={updateReading} headerLabel='Diesel Reading' inputLabel='Opening' value={Number(fuelDetails.dieselOpening)}/>
             </View>
           </View>
           <Divider />
@@ -320,13 +319,13 @@ function WorkDetailsScreen({ route, navigation }) {
                 <Text style={styles.valueTextGreen}>Petrol</Text>
               </View>
               <View style={{flex: 1, alignItems: 'flex-start'}}>
-                <ReadingOverlay fuelType={PETROL} readingType={UGT_READING} update={updateReading} headerLabel='Petrol UGT' inputLabel='Ugt (ltrs)' value={parseInt(fuelDetails.petrolUgt)}/>
+                <ReadingOverlay fuelType={PETROL} readingType={UGT_READING} update={updateReading} headerLabel='Petrol UGT' inputLabel='Ugt (ltrs)' value={Number(fuelDetails.petrolUgt)}/>
               </View>
               <View style={{flex:1}}>
                 <Text style={styles.valueText}>Diesel</Text>
               </View>
               <View style={{flex: 1, alignItems: 'flex-start'}}>
-                <ReadingOverlay fuelType={DIESEL} readingType={UGT_READING} update={updateReading} headerLabel='Diesel UGT' inputLabel='Ugt (ltrs)' value={parseInt(fuelDetails.dieselUgt)}/>
+                <ReadingOverlay fuelType={DIESEL} readingType={UGT_READING} update={updateReading} headerLabel='Diesel UGT' inputLabel='Ugt (ltrs)' value={Number(fuelDetails.dieselUgt)}/>
               </View>
             </View>
             <Divider />

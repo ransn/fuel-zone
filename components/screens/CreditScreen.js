@@ -16,7 +16,7 @@ function CreditScreen({ navigation, route }) {
   const [userDetails, setUserDetails] = useState({
     userName:'',
     userMobileNumber: '',
-    balance: parseInt(0)
+    balance: Number(0)
   })
   const [editUser, setEditUser] = useState(false);
  
@@ -57,7 +57,7 @@ function CreditScreen({ navigation, route }) {
     setUserDetails({
       userName:'',
       userMobileNumber: '',
-      balance: parseInt(0)
+      balance: Number(0)
     });
     toggleAddCreditUserOverlay()
   }
@@ -66,40 +66,6 @@ function CreditScreen({ navigation, route }) {
     setEditUser(true);
     setUserDetails(user);
     toggleAddCreditUserOverlay()
-  }
-
-  useEffect(()=>{
-    if (route.params?.work) {
-      const{work} = route.params;
-      let nameArray = workList.map(item => {
-        return item.name;
-      });
-      if(!nameArray.includes(work.name)){
-        workList.push(work);
-        setWorkList(workList);
-        setOpen(!open);
-      }
-    }
-  }, [route.params?.work]);
-
-  const deleteUser = (workName) => {
-    Alert.alert(
-      "Delete User",
-      "Are you sure to delete this user ?",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        { text: "OK", onPress: () => {
-            var filteredWorkList = workList.filter(function(work, index, arr){
-              return work.name != workName;
-            });
-            setWorkList(filteredWorkList);
-        } }
-      ]
-    );
   }
 
   return (

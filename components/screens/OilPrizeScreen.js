@@ -5,7 +5,6 @@ import { Card, Divider, Button, Text, Overlay, Input } from 'react-native-elemen
 function OilPrizeScreen({navigation}){
     const [oilPrize, setOilPrize] = useState('20');
     const savePrize = () => {
-        console.log(oilPrize);
         navigation.navigate('Settings');
     }
     return(

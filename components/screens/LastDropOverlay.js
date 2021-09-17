@@ -4,10 +4,10 @@ import { Button, Overlay, Input } from 'react-native-elements';
 
 function LastDropOverlay(props, { navigation }) {
   const [lastDrop, setLastDrop] = useState({
-    lastCash: parseInt(0),
-    card: parseInt(0),
-    upi: parseInt(0),
-    credit: parseInt(0)
+    lastCash: Number(0),
+    card: Number(0),
+    upi: Number(0),
+    credit: Number(0)
   });
   const [overlayVisible, setOverlayVisible] = useState(false);
 

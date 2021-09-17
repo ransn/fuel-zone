@@ -1,11 +1,8 @@
 import React, {useState, useContext} from 'react';
 import { View, ScrollView } from "react-native";
 import { Card, Text, Divider } from "react-native-elements";
-//import PriceContext from "../PriceContext";
 function ReportComponent(props){
-    //const priceDetails = useContext(PriceContext);
     const report = props.value;
-    console.log(report);
     const {petrolOpening, petrolClosing, 
             dieselOpening, dieselClosing, 
             petrolUgt, dieselUgt} = report.fuelDetails;
@@ -19,28 +16,6 @@ function ReportComponent(props){
             salesTotal, returnsTotal,
             difference 
           } = report.calculatedReport;
-    // const petrolLiters = petrolClosing - petrolOpening;
-    // const petrolAmt = petrolLiters*priceDetails.petrol;
-    // const dieselLiters = dieselClosing - dieselOpening;
-    // const dieselAmt = dieselLiters*priceDetails.diesel;
-    // const packetAmt = packetCount*priceDetails.oil;
-    // const salesTotal = petrolAmt+dieselAmt+packetAmt;
-    // const petrolUgtAmt = petrolUgt*priceDetails.petrol;
-    // const dieselUgtAmt = dieselUgt*priceDetails.diesel;
-
-    // // Returns
-
-    // const {safeDropCount, safeDropAmount} = work.safeDropDetails;
-    // const {lastCash, card, upi, credit} = work.lastDropDetails;
-
-    // const returnsTotal = parseInt(safeDropAmount)+
-    //                     parseInt(lastCash)+
-    //                     parseInt(card)+
-    //                     parseInt(upi)+
-    //                     parseInt(credit)-
-    //                     parseInt(petrolUgtAmt)-
-    //                     parseInt(dieselUgtAmt);
-    // const difference = salesTotal - returnsTotal;
     return(
         <Card>
             <Card.Title>Summary</Card.Title>

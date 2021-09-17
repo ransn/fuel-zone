@@ -23,18 +23,18 @@ function StaffDetailsScreen({ navigation }) {
   const [safeDropCount, setSafeDropCount] = useState(0);
   const [safeDropAmount, setSafeDropAmount] = useState(0);
   const [lastDrop, setLastDrop] = useState({
-    lastCash: parseInt(0),
-    card: parseInt(0),
-    upi: parseInt(0),
-    credit: parseInt(0)
+    lastCash: Number(0),
+    card: Number(0),
+    upi: Number(0),
+    credit: Number(0)
   });
   const [report, setReport] = useState({
-    petrolLiters: parseInt(0),
-    dieselLiters: parseInt(0),
-    oilPackets: parseInt(0),
-    oilAmount: parseInt(0),
-    safeDropCount: parseInt(0),
-    safeDropAmount: parseInt(0),
+    petrolLiters: Number(0),
+    dieselLiters: Number(0),
+    oilPackets: Number(0),
+    oilAmount: Number(0),
+    safeDropCount: Number(0),
+    safeDropAmount: Number(0),
     lastDrop: {}
   })
   
@@ -77,12 +77,12 @@ function StaffDetailsScreen({ navigation }) {
 
   const updateOilPacketCount = (count) => {
     setPacketCount(count);
-    setPacketAmount(parseInt(count)*20);
+    setPacketAmount(Number(count)*20);
   }
 
   const updateSafedropCount = (count) => {
-    setSafeDropCount(parseInt(count));
-    setSafeDropAmount(parseInt(count)*8000);
+    setSafeDropCount(Number(count));
+    setSafeDropAmount(Number(count)*8000);
   }
 
   const updateLastDrop = (lastDrop) => {

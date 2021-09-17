@@ -16,19 +16,19 @@ function SafedropCountOverlay(props, { navigation }) {
     setCount(0);
   }
   const incrementSafedropCount = () => {
-    var totalCount= parseInt(props.value)+1;
+    var totalCount= Number(props.value)+1;
     props.update(totalCount);
     toggleOverlay();
   }
 
   const decrementSafedropCount = () => {
-    var totalCount= parseInt(props.value)-1;
+    var totalCount= Number(props.value)-1;
     props.update(totalCount);
     toggleOverlay();
   }
 
   const resetSafedropsCount = () => {
-    props.update(parseInt(resetCount));
+    props.update(Number(resetCount));
     toggleOverlay();
   }
 

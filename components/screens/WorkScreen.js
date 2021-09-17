@@ -25,12 +25,12 @@ function WorkScreen({ navigation, route }) {
   const createWork = () => {
     let workName = '';
     if(workList.length == 0){
-      workName = "Work "+parseInt(workList.length+1);
+      workName = "Work "+Number(workList.length+1);
     }else{
       let lastWork = workList[workList.length-1];
       let nameParts = lastWork.name.split(' ');
-      let lastNumber = parseInt(nameParts[1]);
-      workName = "Work "+parseInt(lastNumber+1);
+      let lastNumber = Number(nameParts[1]);
+      workName = "Work "+Number(lastNumber+1);
     }
     navigation.navigate("WorkDetails", {workName: workName});
   }

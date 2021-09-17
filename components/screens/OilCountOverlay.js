@@ -16,12 +16,12 @@ function OilCountOverlay(props, { navigation }) {
     setCount(0);
   }
   const addOilPacketsCount = () => {
-    var totalCount= parseInt(props.value)+parseInt(count);
+    var totalCount= Number(props.value)+Number(count);
     props.update(totalCount);
     toggleOverlay();
   }
   const resetOilPacketsCount = () => {
-    props.update(parseInt(resetCount));
+    props.update(Number(resetCount));
     toggleOverlay();
   }
 

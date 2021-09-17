@@ -16,7 +16,7 @@ const Tab = createBottomTabNavigator();
 function App() {
   const scheme = useColorScheme();
   let priceDetails = {
-    petrol: 106,
+    petrol: 104.23,
     diesel: 103.26,
     oil: 19
   }
