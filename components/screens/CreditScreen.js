@@ -15,8 +15,7 @@ function CreditScreen({ navigation, route }) {
   const [refreshing, setRefreshing] = React.useState(false);
   const [userDetails, setUserDetails] = useState({
     userName:'',
-    userMobileNumber: '',
-    balance: Number(0)
+    userMobileNumber: ''
   })
   const [editUser, setEditUser] = useState(false);
  
@@ -128,9 +127,9 @@ function CreditScreen({ navigation, route }) {
         <Avatar rounded source={require('../../images/user.png')} icon={{name: 'person', type: 'ionicon'}}/>
         <ListItem.Content>
           <ListItem.Title>{l.userName}</ListItem.Title>
-          <Text style={{color:'#3a414e', fontSize:13}}> 
+          {/* <Text style={{color:'#3a414e', fontSize:13}}> 
             Balance: {l.balance}
-          </Text>
+          </Text> */}
           <Text style={{color:'#3a414e', fontSize:13}}> 
             Mobile: {l.userMobileNumber}
           </Text>

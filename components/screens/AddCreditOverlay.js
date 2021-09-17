@@ -23,8 +23,9 @@ function AddCreditOverlay(props, { navigation }) {
   }
   const onAddCreditDetails = () => {
     var date = new Date();
+    var month = date.getMonth()+1;
     setCreditDetails({
-      date: date.getDate()+'/'+date.getMonth()+'/'+date.getYear(),
+      date: date.getDate()+'/'+month+'/'+date.getFullYear(),
       fuelType: 'Petrol',
       liters: 0,
       amount: 0
