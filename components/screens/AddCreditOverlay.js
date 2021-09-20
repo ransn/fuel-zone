@@ -2,6 +2,7 @@ import React, {useState, useContext} from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { Button, Overlay, Input, CheckBox } from 'react-native-elements';
 import PriceContext from "../PriceContext"
+import firestore from '@react-native-firebase/firestore';
 
 function AddCreditOverlay(props, { navigation }) {
   const priceDetails = useContext(PriceContext);
@@ -10,7 +11,7 @@ function AddCreditOverlay(props, { navigation }) {
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [selected, setSelected] = useState(true);
   const [creditDetails, setCreditDetails] = useState({
-    date: '',
+    createdAt: '',
     fuelType: 'Petrol',
     liters: 0,
     amount: 0
@@ -25,7 +26,7 @@ function AddCreditOverlay(props, { navigation }) {
     var date = new Date();
     var month = date.getMonth()+1;
     setCreditDetails({
-      date: date.getDate()+'/'+month+'/'+date.getFullYear(),
+      createdAt: firestore.FieldValue.serverTimestamp(),
       fuelType: 'Petrol',
       liters: 0,
       amount: 0

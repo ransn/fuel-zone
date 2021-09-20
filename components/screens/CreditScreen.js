@@ -1,12 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import { RefreshControl, ScrollView, View, Alert } from 'react-native';
 import { Text, Card, ListItem, Input, Avatar, Badge, SpeedDial, Divider, Button, SearchBar, Overlay } from 'react-native-elements';
+import firestore from '@react-native-firebase/firestore';
+
 
 const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
 function CreditScreen({ navigation, route }) {
+  const ref = firestore().collection('creditUsers');
   const [search, setSearch] = useState('');
   const [visibleForm, setVisibleForm] = useState(false);
   const [creditUsers,setCreditUsers] = useState([]);
@@ -15,9 +18,34 @@ function CreditScreen({ navigation, route }) {
   const [refreshing, setRefreshing] = React.useState(false);
   const [userDetails, setUserDetails] = useState({
     userName:'',
-    userMobileNumber: ''
+    userMobileNumber: '',
+    totalBalance: Number(0)
   })
   const [editUser, setEditUser] = useState(false);
+
+  useEffect(() => {
+    const subscriber = ref.onSnapshot(onResult, onError);
+    return () => subscriber();
+  }, []);
+
+  function onResult(querySnapshot) {
+    const list = [];
+    querySnapshot.forEach(documentSnapshot => {
+      const data = documentSnapshot.data();
+        list.push({
+          id: documentSnapshot.id,
+          userName: data.userName,
+          userMobileNumber: data.userMobileNumber,
+          totalBalance: data.totalBalance
+        });
+    });
+    setCreditUsers(list);
+    setFilteredUsers(list);
+  }
+
+  function onError(error) {
+    console.error(error);
+  }
  
   updateSearch = (query) => {
     setSearch(query);
@@ -30,24 +58,28 @@ function CreditScreen({ navigation, route }) {
       setFilteredUsers(creditUsers);
     }
   }
+
   const toggleAddCreditUserOverlay = () => {
     setVisibleForm(!visibleForm);
     setOpen(!visibleForm);
   };
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
+  // const onRefresh = React.useCallback(() => {
+  //   setRefreshing(true);
+  //   wait(2000).then(() => setRefreshing(false));
+  // }, []);
 
   const addCreditUser = () => {
-    creditUsers.push(userDetails)
-    setCreditUsers(creditUsers);
-    setFilteredUsers(creditUsers);
+    ref.add(userDetails).then(()=>{
+      console.log('Added successfully');
+    });
     toggleAddCreditUserOverlay();
   };
 
   const updateCreditUser = () => {
+    ref.doc(userDetails.id).update(userDetails).then(() => {
+      console.log('Updated successfully');
+    });
     toggleAddCreditUserOverlay();
   };
   
@@ -56,7 +88,7 @@ function CreditScreen({ navigation, route }) {
     setUserDetails({
       userName:'',
       userMobileNumber: '',
-      balance: Number(0)
+      totalBalance: Number(0)
     });
     toggleAddCreditUserOverlay()
   }
@@ -82,14 +114,7 @@ function CreditScreen({ navigation, route }) {
     }
     
     <ScrollView 
-      style={{flex:1}}
-      refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-        }
-    >
+      style={{flex:1}}>
     <Overlay overlayStyle={{height: 280, width: 350, borderRadius: 10}} isVisible={visibleForm} onBackdropPress={toggleAddCreditUserOverlay} supportedOrientations={['portrait', 'landscape']}>
           <ScrollView style={{flex: 1}}>
             <Text style={{flex:0.9, padding: 5, fontSize:15, fontWeight:'bold' }}>Credit User:</Text>
@@ -127,11 +152,11 @@ function CreditScreen({ navigation, route }) {
         <Avatar rounded source={require('../../images/user.png')} icon={{name: 'person', type: 'ionicon'}}/>
         <ListItem.Content>
           <ListItem.Title>{l.userName}</ListItem.Title>
-          {/* <Text style={{color:'#3a414e', fontSize:13}}> 
-            Balance: {l.balance}
-          </Text> */}
           <Text style={{color:'#3a414e', fontSize:13}}> 
             Mobile: {l.userMobileNumber}
+          </Text>
+          <Text style={{color:'#3a414e', fontSize:13, fontWeight:'bold'}}> 
+            Balance: {l.totalBalance}
           </Text>
         </ListItem.Content>
         <Button icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} type='clear' onPress={()=>{onEditUser(l)}}/>

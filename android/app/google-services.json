@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1092192640653",
+    "project_id": "fuel-zone-test",
+    "storage_bucket": "fuel-zone-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092192640653:android:24fc774bb29b41011b8cc4",
+        "android_client_info": {
+          "package_name": "com.fuelzone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1092192640653-vl9e2sln6bm4f8df373t8r8802tbdnhq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpTGG9Srpx2V4wozJGolqrCQ1YnmiKRZg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1092192640653-vl9e2sln6bm4f8df373t8r8802tbdnhq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1092192640653-0nv03vbqme7j5dsa9fdhiaavv5j3barv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.FuelZone"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
