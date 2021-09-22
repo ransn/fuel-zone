@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useColorScheme } from 'react-native';
 import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -10,19 +10,22 @@ import PumpStack from "./components/screens/PumpStack";
 import CreditStack from "./components/screens/CreditStack";
 import SettingsStack from "./components/screens/SettingsStack";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import PriceContext from "./components/PriceContext";
+import PriceContext, {priceDetails} from "./components/PriceContext";
 
 const Tab = createBottomTabNavigator();
 function App() {
   const scheme = useColorScheme();
-  let priceDetails = {
-    petrol: 104.23,
-    diesel: 103.26,
-    oil: 19
+  const updatePriceDetails = (latestPriceDetails) => {
+    setPriceWrapper({...priceWrapper, priceDetails: latestPriceDetails});
   }
+  const [priceWrapper, setPriceWrapper] = useState({
+    priceDetails: priceDetails,
+    updatePriceDetails: updatePriceDetails
+  });
+  
   return (
     <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
-    <PriceContext.Provider value={priceDetails}>
+    <PriceContext.Provider value={priceWrapper}>
       <Tab.Navigator initialRouteName="Dashboard">
         <Tab.Screen name="Dashboard" component={HomeScreen} options={{
           tabBarLabel: 'Home', tabBarIcon: () => (

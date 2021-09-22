@@ -1,7 +1,9 @@
 import React, {useState, useContext} from 'react';
 import { View, ScrollView } from "react-native";
 import { Card, Text, Divider } from "react-native-elements";
+import PriceContext from "../PriceContext"
 function ReportComponent(props){
+    const {priceDetails} = useContext(PriceContext);
     const report = props.value;
     const {petrolOpening, petrolClosing, 
             dieselOpening, dieselClosing, 
@@ -20,19 +22,19 @@ function ReportComponent(props){
         <Card>
             <Card.Title>Summary</Card.Title>
             <View style={{flex:1, flexDirection:'row'}}>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Petrol()</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Petrol({priceDetails.petrol})</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Liters: {petrolLiters}</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {petrolAmount.toFixed(2)}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Diesel()</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Diesel({priceDetails.diesel})</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Liters: {dieselLiters}</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {dieselAmount.toFixed(2)}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Oil()</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Oil({priceDetails.oilPacket})</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Count: {packetCount}</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {oilAmount}</Text>
             </View>

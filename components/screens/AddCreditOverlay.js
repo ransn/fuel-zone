@@ -5,7 +5,7 @@ import PriceContext from "../PriceContext"
 import firestore from '@react-native-firebase/firestore';
 
 function AddCreditOverlay(props, { navigation }) {
-  const priceDetails = useContext(PriceContext);
+  const {priceDetails} = useContext(PriceContext);
   const petrolTitle = 'Petrol ('+priceDetails.petrol+')';
   const dieselTitle = 'Diesel ('+priceDetails.diesel+')';
   const [overlayVisible, setOverlayVisible] = useState(false);

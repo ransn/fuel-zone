@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { ListItem, Icon } from 'react-native-elements'
 import { Button, View, Text } from 'react-native';
 
@@ -6,28 +6,16 @@ const list = [
   {
     title: 'Set Fuel Prize',
     icon: 'rupee',
-    subtitle: 'petrol: 105.25, diesel: 103.23',
     navigateTo: 'FuelPrize'
-  },
-  {
-    title: 'Set Oil Prize',
-    icon: 'rupee',
-    subtitle: 'oil: 20',
-    navigateTo: 'OilPrize'
-  },
-  {
-    title: 'Active/Inactive Pumps',
-    icon: 'rupee',
-    subtitle: 'pump 4',
-    navigateTo: 'PumpSettings'
-  },
-  {
-    title: 'Load/Unload Fuel',
-    icon: 'rupee',
-    navigateTo: 'FuelLoadUnload'
   }
 ]
-function SettingsScreen({ navigation }) {
+function SettingsScreen({ navigation, route }) {
+  const [prizeDetails, setPrizeDetails] = useState({});
+  useEffect(()=>{
+    if(route.param?.prizeDetails ){
+      setPrizeDetails(prizeDetails);
+    }
+  }, []);
   return (
     <View>
   {
@@ -36,7 +24,6 @@ function SettingsScreen({ navigation }) {
         <Icon name={item.icon}   type='font-awesome'/>
         <ListItem.Content>
           <ListItem.Title>{item.title}</ListItem.Title>
-          <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle>
         </ListItem.Content>
         <ListItem.Chevron />
       </ListItem>

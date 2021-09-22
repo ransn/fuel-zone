@@ -11,7 +11,7 @@ import LastDropOverlay from "./LastDropOverlay";
 import PriceContext from "../PriceContext"
 
 function WorkDetailsScreen({ route, navigation }) {
-  const priceDetails = useContext(PriceContext);
+  const {priceDetails} = useContext(PriceContext);
   const initialWork = {
     name: '',
     status: 'N',
@@ -167,7 +167,7 @@ function WorkDetailsScreen({ route, navigation }) {
     const petrolAmt = petrolLiters*priceDetails.petrol;
     const dieselLiters = dieselClosing - dieselOpening;
     const dieselAmt = dieselLiters*priceDetails.diesel;
-    const packetAmt = packetCount*priceDetails.oil;
+    const packetAmt = packetCount*priceDetails.oilPacket;
     const salesTotal = petrolAmt+dieselAmt+packetAmt;
     const petrolUgtAmt = petrolUgt*priceDetails.petrol;
     const dieselUgtAmt = dieselUgt*priceDetails.diesel;
@@ -259,7 +259,7 @@ function WorkDetailsScreen({ route, navigation }) {
         <>
           <Card containerStyle={{borderRadius: 5, borderColor: 'blue'}}>
               <View style={{flex:1, flexDirection: 'row'}}>
-                <Text style={styles.valueText}>Oils ({priceDetails.oil}Rs):</Text>
+                <Text style={styles.valueText}>Oils ({priceDetails.oilPacket}Rs):</Text>
                 <View style={{flex:1}} alignItems='flex-end'>
                   <OilCountOverlay update={updateOilPacketCount} value={oilDetails.packetCount}/>
                 </View>
@@ -269,7 +269,7 @@ function WorkDetailsScreen({ route, navigation }) {
                 <Text style={styles.labelText}>Packets:</Text>
                 <Text style={styles.valueText}>{oilDetails.packetCount}</Text>
                 <Text style={styles.labelText}>Amount:</Text>
-                <Text style={styles.valueText}>{priceDetails.oil*oilDetails.packetCount}</Text>
+                <Text style={styles.valueText}>{priceDetails.oilPacket*oilDetails.packetCount}</Text>
               </View>
             </Card>
 
