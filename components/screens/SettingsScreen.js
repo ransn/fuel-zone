@@ -7,7 +7,13 @@ const list = [
     title: 'Set Fuel Prize',
     icon: 'rupee',
     navigateTo: 'FuelPrize'
+  },
+  {
+    title: 'Staff',
+    icon: 'user',
+    navigateTo: 'StaffList'
   }
+
 ]
 function SettingsScreen({ navigation, route }) {
   const [prizeDetails, setPrizeDetails] = useState({});
