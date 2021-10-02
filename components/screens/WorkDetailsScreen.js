@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import { StyleSheet, View, Image, ScrollView } from 'react-native';
+import { StyleSheet, View, Image, ScrollView, Alert } from 'react-native';
 import { Card, Divider, Button, Text, Overlay } from 'react-native-elements';
 import ReportComponent from "./ReportComponent";
 import AssignPumpOverlay from "./AssignPumpOverlay";
@@ -9,8 +9,16 @@ import OilCountOverlay from "./OilCountOverlay";
 import SafedropCountOverlay from "./SafedropCountOverlay";
 import LastDropOverlay from "./LastDropOverlay";
 import PriceContext from "../PriceContext"
+import firestore from '@react-native-firebase/firestore';
 
 function WorkDetailsScreen({ route, navigation }) {
+  const workRef = firestore().collection('works');
+  const fuelDetailsRef = firestore().collection('fuelDetails');
+  const oilDetailsRef = firestore().collection('oilDetails');
+  const safeDropDetailsRef = firestore().collection('safeDropDetails');
+  const lastDropDetailsRef = firestore().collection('lastDropDetails');
+  const reportsRef = firestore().collection('reports');
+
   const {priceDetails} = useContext(PriceContext);
   const initialWork = {
     name: '',
@@ -22,21 +30,39 @@ function WorkDetailsScreen({ route, navigation }) {
   const [work, setWork] = useState(initialWork);
   const [status, setStatus] = useState('N');
   useEffect(()=>{
-
-    if(route.params?.workName && route.params.workName.length > 0){
-      const name = route.params.workName;
+    if(route.params?.workItem){
+      var workId = route.params.workItem.id;
+      workRef.doc(workId).get().then((workDetails)=>{
+        setWork(workDetails.data());
+        navigation.setOptions({title: workDetails.data().name});
+      });
+      fuelDetailsRef.doc(workId).get().then((fuelDetails)=>{
+        setFuelDetails(fuelDetails.data());
+      });
+      oilDetailsRef.doc(workId).get().then((oilDetails)=>{
+        if(oilDetails.data()){
+          setOilDetails(oilDetails.data())
+        }
+      });
+      safeDropDetailsRef.doc(workId).get().then((safeDropDetails)=>{
+        if(safeDropDetails.data()){
+          setSafeDropDetails(safeDropDetails.data());
+        }
+      });
+      lastDropDetailsRef.doc(workId).get().then((lastDropDetails)=>{
+        if(lastDropDetails.data()){
+          setLastDropDetails(lastDropDetails.data());
+        }
+      });
+    }else{
+      const name = 'Work';
       let updatedWork = work;
       updatedWork.name = name;
-      updatedWork.timestamp = new Date().getDate();
+      updatedWork.timestamp = firestore.FieldValue.serverTimestamp();
       setWork(updatedWork);
-      navigation.setOptions({title: work.name});
+      navigation.setOptions({title: name});
     }
-    else if(route.params?.workItem){
-      setWork(route.params.workItem);
-      navigation.setOptions({title: work.name});
-    }
-
-  }, [work]);
+  }, []);
 
   const [fuelDetails, setFuelDetails] = useState({
     petrolOpening: Number(0),
@@ -44,13 +70,22 @@ function WorkDetailsScreen({ route, navigation }) {
     dieselOpening: Number(0),
     dieselClosing: Number(0),
     petrolUgt: Number(0),
-    dieselUgt: Number(0)
+    dieselUgt: Number(0),
+    petrolPrice: priceDetails.petrol,
+    dieselPrice: priceDetails.diesel,
+    petrolAmount: Number(0),
+    dieselAmount: Number(0),
+    petrolUgtAmount: Number(0),
+    dieselUgtAmount: Number(0)
   });
   const [oilDetails, setOilDetails] = useState({
-    packetCount: Number(0)
+    packetCount: Number(0),
+    packetPrice: priceDetails.oilPacket,
+    amount: Number(0)
   });
   const [safeDropDetails, setSafeDropDetails] = useState({
-    safeDropCount: Number(0)
+    safeDropCount: Number(0),
+    amount: Number(0)
   });
   const [lastDropDetails, setLastDropDetails] = useState({
     lastCash: Number(0),
@@ -59,14 +94,10 @@ function WorkDetailsScreen({ route, navigation }) {
     credit: Number(0)
   });
   const [calculatedReport, setCalculatedReport] = useState({
-    petrolLiters: 0,
-    dieselLiters: 0,
-    petrolAmount: 0,
-    dieselAmount: 0,
-    oilAmount: 0,
-    petrolUgtAmount: 0,
-    dieselUgtAmount: 0,
-    safeDropAmount: 0,
+    fuelDetails: {},
+    oilDetails: {},
+    safeDropDetails: {},
+    lastDropDetails: {},
     salesTotal: 0,
     returnsTotal: 0,
     difference: 0
@@ -88,22 +119,48 @@ function WorkDetailsScreen({ route, navigation }) {
   const startWork = () => {
     let updatedWork = work;
     updatedWork.status = 'A';
+    updatedWork.name = 'Work_'+work.pumpName;
+    const documentReference = workRef.doc();
+    const workId = documentReference.id;
+    updatedWork.id = workId;
     setWork(updatedWork);
+    
+    documentReference.set(work).then(()=>{
+      console.log('Work details added');
+      fuelDetailsRef.doc(workId).set(fuelDetails).then(()=>{
+        console.log('Fuel details added');
+      });
+    });
     navigation.navigate({
-      name: 'WorkList',
-      params: {work: work}
+      name: 'WorkList'
     })
   };
 
   const endWork = () => {
-    let updatedWork = work;
-    updatedWork.status = 'I';
-    setWork(updatedWork);
-    calculateTotal();
-    navigation.navigate({
-      name: 'WorkList',
-      params: {work: work}
-    })
+    Alert.alert(
+      "End Work",
+      "Are you sure to end this work ?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => {
+            let updatedWork = work;
+            updatedWork.status = 'I';
+            setWork(updatedWork);
+            createReport();
+            workRef.doc(work.id).set(updatedWork).then(()=>{
+              navigation.navigate({
+                name: 'WorkList'
+              })
+            });
+          } 
+        }
+      ]
+    );
+    
   }
 
   const toggleCalculateOverlay = () => {
@@ -119,89 +176,168 @@ function WorkDetailsScreen({ route, navigation }) {
   }
 
   const updateReading = (readingValue, readingType, fuelType) => {
+    var updatedFuelDetails = fuelDetails;
     if(readingType == OPENING_READING && fuelType == PETROL){
       setFuelDetails({...fuelDetails, petrolOpening: readingValue});
+      updatedFuelDetails.petrolOpening = readingValue;
     }else if(readingType == OPENING_READING && fuelType == DIESEL){
       setFuelDetails({...fuelDetails, dieselOpening: readingValue});
+      updatedFuelDetails.dieselOpening = readingValue;
     }else if(readingType == CLOSING_READING && fuelType == PETROL){
       setFuelDetails({...fuelDetails, petrolClosing: readingValue});
+      updatedFuelDetails.petrolClosing = readingValue;
     }else if(readingType == CLOSING_READING && fuelType == DIESEL){
       setFuelDetails({...fuelDetails, dieselClosing: readingValue});
+      updatedFuelDetails.dieselClosing = readingValue;
     }else if(readingType == UGT_READING && fuelType == PETROL){
       setFuelDetails({...fuelDetails, petrolUgt: readingValue});
+      updatedFuelDetails.petrolUgt = readingValue;
     }else if(readingType == UGT_READING && fuelType == DIESEL){
       setFuelDetails({...fuelDetails, dieselUgt: readingValue});
+      updatedFuelDetails.dieselUgt = readingValue;
     }
-
+    if(readingType != OPENING_READING){
+      if(work.id){
+        fuelDetailsRef.doc(work.id).set(updatedFuelDetails).then(()=>{
+        console.log('Fuel details updated');
+        });
+      }else{
+        console.log('work id is empty');
+      }
+    }
   }
 
   const updateOilPacketCount = (count) => {
-    setOilDetails({...oilDetails, packetCount: count});
+    var updatedOilDetails = oilDetails;
+    updatedOilDetails.packetCount = count;
+    updatedOilDetails.amount = count*priceDetails.oilPacket;
+    setOilDetails({...oilDetails, packetCount: count, amount: count*priceDetails.oilPacket});
+    if(work.id){
+      oilDetailsRef.doc(work.id).set(updatedOilDetails).then(()=>{
+        console.log('Oil details updated');
+      });
+    }else{
+      console.log('work id is empty');
+    }
   }
 
   const updateSafedropCount = (count) => {
+    var updatedSafeDropDetails = safeDropDetails;
+    updatedSafeDropDetails.safeDropCount = Number(count);
+    updatedSafeDropDetails.amount = Number(count)*8000;
     setSafeDropDetails({
       ...safeDropDetails,
       safeDropCount: Number(count),
-      safeDropAmount: Number(count)*8000
+      amount: Number(count)*8000
     });
+    if(work.id){
+      safeDropDetailsRef.doc(work.id).set(updatedSafeDropDetails).then(()=>{
+        console.log('Safe drop details updated');
+      });
+    }else{
+      console.log('work id is empty');
+    }
   }
 
-  const updateLastDrop = (lastDropDetails) => {
-    setLastDropDetails(lastDropDetails);
+  const updateLastDrop = (updatedLastDropDetails) => {
+    setLastDropDetails(updatedLastDropDetails);
+    if(work.id){
+      lastDropDetailsRef.doc(work.id).set(updatedLastDropDetails).then(()=>{
+        console.log('Last drop details updated');
+      });
+    }else{
+      console.log('work id is empty');
+    }
   }
 
-  const createReport = () => {
-    calculateTotal();
-    
-    toggleCalculateOverlay();
-  }
-
-  const calculateTotal = () => {
+  const calculateAndUpdateFuelDetails = () => {
+    var updatedFuelDetails = fuelDetails;
     const {petrolOpening, petrolClosing, 
             dieselOpening, dieselClosing, 
             petrolUgt, dieselUgt} = fuelDetails;
-    const {packetCount} = oilDetails;
-    const {safeDropCount} = safeDropDetails;
-    const petrolLiters = petrolClosing - petrolOpening;
-    const petrolAmt = petrolLiters*priceDetails.petrol;
-    const dieselLiters = dieselClosing - dieselOpening;
-    const dieselAmt = dieselLiters*priceDetails.diesel;
-    const packetAmt = packetCount*priceDetails.oilPacket;
-    const salesTotal = petrolAmt+dieselAmt+packetAmt;
-    const petrolUgtAmt = petrolUgt*priceDetails.petrol;
-    const dieselUgtAmt = dieselUgt*priceDetails.diesel;
-    const safeDropAmount = safeDropCount*8000;
+    var petrolAmount = (petrolClosing - petrolOpening)*priceDetails.petrol;
+    var dieselAmount = (dieselClosing - dieselOpening)*priceDetails.diesel;
+    var petrolUgtAmt = petrolUgt*priceDetails.petrol;
+    var dieselUgtAmt = dieselUgt*priceDetails.diesel;
+
+    updatedFuelDetails.petrolPrice = priceDetails.petrol;
+    updatedFuelDetails.dieselPrice = priceDetails.diesel;
+    updatedFuelDetails.petrolAmount = petrolAmount;
+    updatedFuelDetails.dieselAmount = dieselAmount;
+    updatedFuelDetails.petrolUgtAmount = petrolUgtAmt;
+    updatedFuelDetails.dieselUgtAmount = dieselUgtAmt;
     
+    setFuelDetails(updatedFuelDetails);
+
+    if(work.id){
+      fuelDetailsRef.doc(work.id).set(updatedFuelDetails).then(()=>{
+        console.log('Preview - Fuel details updated');
+      });
+    }else{
+      console.log('work id is empty');
+    }
+    return updatedFuelDetails;
+  }
+
+  const calculateAndUpdateOilDetails = () => {
+    var updatedOilDetails = oilDetails;
+    var totalPacketsAmount = oilDetails.packetCount * priceDetails.oilPacket; 
+    if(oilDetails.amount != totalPacketsAmount){
+      updatedOilDetails.amount = totalPacketsAmount;
+      updatedOilDetails.packetPrice = priceDetails.oilPacket;
+      setOilDetails(updatedOilDetails);
+      if(work.id){
+      oilDetailsRef.doc(work.id).set(updatedOilDetails).then(()=>{
+        console.log('Preview - Oil details updated');
+      });
+      }else{
+        console.log('work id is empty');
+      }
+    }
+    return updatedOilDetails;
+  }
+
+  const calculateSalesTotal = () => {
+    const {petrolAmount, dieselAmount} = calculateAndUpdateFuelDetails();
+    const {amount} = calculateAndUpdateOilDetails();
+    var salesTotal = petrolAmount+dieselAmount+amount;
+    return salesTotal;
+  }
+
+  const calculateReturnsTotal = () => {
+    const {amount} = safeDropDetails;
     const {lastCash, card, upi, credit} = lastDropDetails;
-    const returnsTotal = Number(safeDropAmount)+
+    const returnsTotal = Number(amount)+
                         Number(lastCash)+
                         Number(card)+
                         Number(upi)+
                         Number(credit)-
-                        Number(petrolUgtAmt)-
-                        Number(dieselUgtAmt);
-    const difference = salesTotal - returnsTotal;
+                        Number(fuelDetails.petrolUgtAmount)-
+                        Number(fuelDetails.dieselUgtAmount);
+    return returnsTotal;
+  }
 
+  useEffect(()=>{
+    if(work.id){
+      reportsRef.doc(work.id).set(calculatedReport).then(()=>{
+        console.log('Report added ..');
+        toggleCalculateOverlay();
+      });
+    }
+  }, [calculatedReport])
+
+  const createReport = () => {
+    const salesTotal = calculateSalesTotal();
+    const returnsTotal = calculateReturnsTotal();
+    const difference = salesTotal - returnsTotal;
     setCalculatedReport({...calculatedReport,
-      petrolLiters: petrolLiters,
-      dieselLiters: dieselLiters, 
-      petrolAmount: petrolAmt,
-      dieselAmount: dieselAmt,
-      oilAmount: packetAmt,
-      petrolUgtAmount: petrolUgtAmt,
-      dieselUgtAmount: dieselUgtAmt,
-      safeDropAmount: safeDropAmount,
-      salesTotal: salesTotal,
-      returnsTotal: returnsTotal,
-      difference: difference
-    });
-    setReport({
       fuelDetails: fuelDetails,
       oilDetails: oilDetails,
       safeDropDetails: safeDropDetails,
       lastDropDetails: lastDropDetails,
-      calculatedReport: calculatedReport
+      salesTotal: salesTotal,
+      returnsTotal: returnsTotal,
+      difference: difference
     });
   }
 
@@ -269,7 +405,7 @@ function WorkDetailsScreen({ route, navigation }) {
                 <Text style={styles.labelText}>Packets:</Text>
                 <Text style={styles.valueText}>{oilDetails.packetCount}</Text>
                 <Text style={styles.labelText}>Amount:</Text>
-                <Text style={styles.valueText}>{priceDetails.oilPacket*oilDetails.packetCount}</Text>
+                <Text style={styles.valueText}>{oilDetails.amount}</Text>
               </View>
             </Card>
 
@@ -285,7 +421,7 @@ function WorkDetailsScreen({ route, navigation }) {
                 <Text style={styles.labelText}>Count:</Text>
                 <Text style={styles.valueText}>{safeDropDetails.safeDropCount}</Text>
                 <Text style={styles.labelText}>Amount:</Text>
-                <Text style={styles.valueText}>{safeDropDetails.safeDropAmount}</Text>
+                <Text style={styles.valueText}>{safeDropDetails.amount}</Text>
               </View>
               <View style={{flex:1, flexDirection: 'row'}}>
                 <Text style={styles.valueText}>Last Drop:</Text>
@@ -377,7 +513,7 @@ function WorkDetailsScreen({ route, navigation }) {
                 />
                 <Overlay overlayStyle={{height: 350, width: 370, borderRadius: 10}} isVisible={calculateOverlayVisible} onBackdropPress={toggleCalculateOverlay} supportedOrientations={['portrait', 'landscape']}>
                     <ScrollView style={{flex: 1}}>
-                      <ReportComponent value={report}/>
+                      <ReportComponent value={calculatedReport}/>
                     </ScrollView>
                 </Overlay>
               </View>
@@ -395,10 +531,6 @@ function WorkDetailsScreen({ route, navigation }) {
             </View>
           }
         </>
-      }
-      {
-        work.status == "I" &&
-          <ReportComponent value={report}/>
       }
     </ScrollView>
   );

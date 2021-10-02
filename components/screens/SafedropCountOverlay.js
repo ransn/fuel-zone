@@ -60,7 +60,7 @@ function SafedropCountOverlay(props, { navigation }) {
             <Input keyboardType='numeric' onChangeText={resetCount => setResetCount(resetCount)} />
           </View>
           <View style={{flex:1}}>
-            <Button title='Set' buttonStyle={{backgroundColor: 'red'}} onPress={resetSafedropsCount}/>
+            <Button title='Set' disabled={resetCount == '' ? true:false} buttonStyle={{backgroundColor: 'red'}} onPress={resetSafedropsCount}/>
           </View>
         </View>
       </Overlay>

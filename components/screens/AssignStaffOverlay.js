@@ -1,36 +1,27 @@
 import React, {useState} from 'react';
-import { View } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { Button, ListItem, Overlay } from 'react-native-elements';
+import firestore from '@react-native-firebase/firestore';
 
-const list = [
-  {
-    name: 'Amy Farha',
-    avatar_url: 'https://i.imgur.com//ee89Mrg.jpg',
-    subtitle: 'Assigned: Pump1'
-  },
-  {
-    name: 'Chris Jackson',
-    avatar_url: 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg',
-    subtitle: 'Assigned: Pump2'
-  },
-  {
-    name: 'Amy Farha',
-    avatar_url: 'https://i.imgur.com//ee89Mrg.jpg',
-    subtitle: 'Assigned: Pump3'
-  },
-  {
-    name: 'Chris Jackson',
-    avatar_url: 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg',
-    subtitle: 'Assigned: Pump4'
-  },
-  {
-    name: 'Amy Farha',
-    avatar_url: 'https://i.imgur.com//ee89Mrg.jpg',
-    subtitle: 'Assigned: Air Pump'
-  }
-]
 function AssignStaffOverlay(props, { navigation }) {
+  const ref = firestore().collection('staffs');
+  const [staffs, setStaffs] = useState([]);
   const [assignOverlayVisible, setAssignOverlayVisible] = useState(false);
+  const loadStaffs = () => {
+    var list = [];
+    ref.get().then(snapshot => {
+      snapshot.docs.forEach((document) => {
+        var data = document.data();
+        list.push({
+          id: document.id,
+          name: data.name
+        })
+      });
+      setStaffs(list);
+      toggleAssignOverlay();
+    });
+  }
+
   const assignStaff = (staff) => {
     props.actionName(staff.name);
     toggleAssignOverlay();
@@ -41,14 +32,15 @@ function AssignStaffOverlay(props, { navigation }) {
 
   return (
     <View>
-      <Button type='clear' titleStyle={{ fontSize: 15, fontWeight:'bold'}} title='Assign' onPress={toggleAssignOverlay}/>
+      <Button type='clear' titleStyle={{ fontSize: 15, fontWeight:'bold'}} title='Assign' onPress={loadStaffs}/>
       <Overlay overlayStyle={{height: 280, width: 250, borderRadius: 10}} 
         visible={assignOverlayVisible} 
         onBackdropPress={toggleAssignOverlay} 
         supportedOrientations={['portrait', 'landscape']}
       >
+      <ScrollView>
           {
-            list.map((l, i) => (
+            staffs.map((l, i) => (
               <ListItem key={i} bottomDivider onPress={()=>{assignStaff(l)}}>
                 <ListItem.Content>
                   <ListItem.Title>{l.name}</ListItem.Title>
@@ -56,6 +48,7 @@ function AssignStaffOverlay(props, { navigation }) {
               </ListItem>
             ))
           }
+        </ScrollView>
       </Overlay>
     </View>
   );

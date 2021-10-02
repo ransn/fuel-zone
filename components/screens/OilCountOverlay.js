@@ -39,7 +39,7 @@ function OilCountOverlay(props, { navigation }) {
             <Input keyboardType='numeric' onChangeText={count => setCount(count)} />
           </View>
           <View style={{flex:1}}>
-            <Button title='+' onPress={addOilPacketsCount}/>
+            <Button title='+' disabled={count == '' ? true:false} onPress={addOilPacketsCount}/>
           </View>
         </View>
         <View style={{flex:1, flexDirection:'row'}}>
@@ -47,7 +47,7 @@ function OilCountOverlay(props, { navigation }) {
             <Input keyboardType='numeric' onChangeText={resetCount => setResetCount(resetCount)}/>
           </View>
           <View style={{flex:1}}>
-            <Button title='Set' buttonStyle={{backgroundColor: 'red'}} onPress={resetOilPacketsCount}/>
+            <Button title='Set' disabled={resetCount == '' ? true:false} buttonStyle={{backgroundColor: 'red'}} onPress={resetOilPacketsCount}/>
           </View>
         </View>
       </Overlay>

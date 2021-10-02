@@ -2,60 +2,52 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet, View, Image, ScrollView } from 'react-native';
 import { Card, Divider, Button, Text, Overlay } from 'react-native-elements';
 import ReportComponent from "./ReportComponent";
+import firestore from '@react-native-firebase/firestore';
 
 function WorkReportScreen({ route, navigation }) {
-  
-  const [work, setWork] = useState({});
-  const [status, setStatus] = useState('N');
-  useEffect(()=>{
-    // call api to load work report
-    setWork(route.params.workItem);
-  }, [work]);
-
-  const [fuelDetails, setFuelDetails] = useState({
-    petrolOpening: Number(0),
-    petrolClosing: Number(0),
-    dieselOpening: Number(0),
-    dieselClosing: Number(0)
-  });
-  const [oilDetails, setOilDetails] = useState({
-    packetCount: Number(0),
-    packetAmount: Number(0)
-  });
-  const [safeDropDetails, setSafeDropDetails] = useState({
-    safeDropCount: Number(0),
-    safeDropAmount: Number(0)
-  });
-  const [lastDropDetails, setLastDropDetails] = useState({
-    lastCash: Number(0),
-    card: Number(0),
-    upi: Number(0),
-    credit: Number(0)
-  });
-  const [calculatedReport, setCalculatedReport] = useState({
-    petrolLiters: 0,
-    dieselLiters: 0,
-    petrolAmount: 0,
-    dieselAmount: 0,
-    oilAmount: 0,
-    petrolUgtAmount: 0,
-    dieselUgtAmount: 0,
-    safeDropAmount: 0,
+  const reportsRef = firestore().collection('reports');
+  const worksRef = firestore().collection('works');
+  const [report, setReport] = useState({
+    fuelDetails: {
+      petrolAmount: Number(0),
+      dieselAmount: Number(0),
+      petrolUgtAmount: Number(0),
+      dieselUgtAmount: Number(0)
+    },
+    oilDetails: {},
+    safeDropDetails: {},
+    lastDropDetails: {},
     salesTotal: 0,
     returnsTotal: 0,
     difference: 0
   });
-  const [report, setReport] = useState({
-    fuelDetails: fuelDetails,
-    oilDetails: oilDetails,
-    safeDropDetails: safeDropDetails,
-    lastDropDetails: lastDropDetails,
-    calculatedReport: calculatedReport
-  })
+  const [work, setWork] = useState({});
+  const [status, setStatus] = useState('N');
+  useEffect(()=>{
+    console.log(route.params.workId);
+    if(route.params?.workId){
+      reportsRef.doc(route.params.workId).get().then((report)=>{
+        setReport(report.data());
+      });
+      worksRef.doc(route.params.workId).get().then((work)=>{
+        setWork(work.data());
+      });
+    }
+  }, []);
+
+  const {fuelDetails, oilDetails, 
+      safeDropDetails, lastDropDetails, 
+      salesTotal, returnsTotal, 
+      difference} = report;
+ 
   return (
     <ScrollView>
-    <ReportComponent value={report}/>
     <Card containerStyle={{borderRadius: 5, borderColor: 'cornflowerblue'}}>
+      <View style={{flex:1, flexDirection: 'row'}}>
+        <Text style={styles.pumpOperatorLabel}>Work Name:</Text>
+        <Text style={styles.valueText}>{work.name}</Text>
+      </View>
+      <Divider />
       <View style={{flex:1, flexDirection: 'row'}}>
         <Text style={styles.pumpOperatorLabel}>Pump:</Text>
         <Text style={styles.valueText}>{work.pumpName}</Text>
@@ -81,17 +73,18 @@ function WorkReportScreen({ route, navigation }) {
           <Divider />
           <View style={{flex:1, flexDirection: 'row'}}>
             <Text style={styles.labelText}>Opening: </Text>
-            <Text style={styles.valueTextGreen}>{fuelDetails.petrolOpening}</Text>
+            <Text style={styles.valueTextGreen}>{report.fuelDetails.petrolOpening}</Text>
             <Text style={styles.labelText}>Opening: </Text>
-            <Text style={styles.valueText}>{fuelDetails.dieselOpening}</Text>
+            <Text style={styles.valueText}>{report.fuelDetails.dieselOpening}</Text>
           </View>
           <View style={{flex:1, flexDirection: 'row'}}>
             <Text style={styles.labelText}>Closing: </Text>
-            <Text style={styles.valueTextGreen}>{fuelDetails.petrolClosing}</Text>
+            <Text style={styles.valueTextGreen}>{report.fuelDetails.petrolClosing}</Text>
             <Text style={styles.labelText}>Closing: </Text>
-            <Text style={styles.valueText}>{fuelDetails.dieselClosing}</Text>
+            <Text style={styles.valueText}>{report.fuelDetails.dieselClosing}</Text>
           </View>
       </Card>
+      <ReportComponent value={report}/>
       
           {/* <Card containerStyle={{borderRadius: 5, borderColor: 'blue'}}>
               <View style={{flex:1, flexDirection: 'row'}}>
@@ -103,7 +96,7 @@ function WorkReportScreen({ route, navigation }) {
                 <Text style={styles.labelText}>Packets:</Text>
                 <Text style={styles.valueText}>{oilDetails.packetCount}</Text>
                 <Text style={styles.labelText}>Amount:</Text>
-                <Text style={styles.valueText}>{oilDetails.packetAmount}</Text>
+                <Text style={styles.valueText}>{oilDetails.amount}</Text>
               </View>
             </Card>
 
@@ -117,7 +110,7 @@ function WorkReportScreen({ route, navigation }) {
                 <Text style={styles.labelText}>Count:</Text>
                 <Text style={styles.valueText}>{safeDropDetails.safeDropCount}</Text>
                 <Text style={styles.labelText}>Amount:</Text>
-                <Text style={styles.valueText}>{safeDropDetails.safeDropAmount}</Text>
+                <Text style={styles.valueText}>{safeDropDetails.amount}</Text>
               </View>
               <View style={{flex:1, flexDirection: 'row'}}>
                 <Text style={styles.valueText}>Last Drop:</Text>

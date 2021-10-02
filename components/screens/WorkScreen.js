@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import { RefreshControl, ScrollView, View, Text, Alert } from 'react-native';
 import { Card, ListItem, Avatar, Badge, SpeedDial, Divider, Button } from 'react-native-elements';
+import firestore from '@react-native-firebase/firestore';
 
 const badgeStatus = {
   "N": "primary",
   "A": "success",
-  "I": "error"
+  "I": "error",
+  "D": "deleted"
 }
 
 const wait = (timeout) => {
@@ -13,6 +15,7 @@ const wait = (timeout) => {
 }
 
 function WorkScreen({ navigation, route }) {
+  const workRef = firestore().collection('works');
   const [workList,setWorkList] = useState([]);
   const [open,setOpen] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -23,33 +26,29 @@ function WorkScreen({ navigation, route }) {
   }, []);
 
   const createWork = () => {
-    let workName = '';
-    if(workList.length == 0){
-      workName = "Work "+Number(workList.length+1);
-    }else{
-      let lastWork = workList[workList.length-1];
-      let nameParts = lastWork.name.split(' ');
-      let lastNumber = Number(nameParts[1]);
-      workName = "Work "+Number(lastNumber+1);
-    }
-    navigation.navigate("WorkDetails", {workName: workName});
+    setOpen(false);
+    navigation.navigate("WorkDetails");
   }
 
-  useEffect(()=>{
-    if (route.params?.work) {
-      const{work} = route.params;
-      let nameArray = workList.map(item => {
-        return item.name;
-      });
-      if(!nameArray.includes(work.name)){
-        workList.push(work);
-        setWorkList(workList);
-        setOpen(!open);
-      }
-    }
-  }, [route.params?.work]);
+  useEffect(() => {
+    const subscriber = workRef.where('status', "!=", 'D').onSnapshot(onResult, onError);
+    return () => subscriber();
+  }, []);
 
-  const deleteWork = (workName) => {
+  function onResult(querySnapshot) {
+    const list = [];
+    querySnapshot.forEach(documentSnapshot => {
+      const data = documentSnapshot.data();
+        list.push(data);
+    });
+    setWorkList(list);
+  }
+
+  function onError(error) {
+    console.error(error);
+  }
+
+  const deleteWork = (work) => {
     Alert.alert(
       "Delete Work",
       "Are you sure to delete this work ?",
@@ -60,10 +59,9 @@ function WorkScreen({ navigation, route }) {
           style: "cancel"
         },
         { text: "OK", onPress: () => {
-            var filteredWorkList = workList.filter(function(work, index, arr){
-              return work.name != workName;
-            });
-            setWorkList(filteredWorkList);
+            workRef.doc(work.id).update({status: 'D', updatedAt: firestore.FieldValue.serverTimestamp()}).then(()=>{
+              console.log('Work status updated to D');
+            })
         } }
       ]
     );
@@ -71,7 +69,7 @@ function WorkScreen({ navigation, route }) {
 
   const navigateTo = (work) => {
     if(work.status == "I"){
-      navigation.navigate('WorkReport', {workItem: work})
+      navigation.navigate('WorkReport', {workId: work.id})
     }else{
       navigation.navigate('WorkDetails', {workItem: work})
     }
@@ -109,7 +107,7 @@ function WorkScreen({ navigation, route }) {
               title="Delete"
               icon={{ name: 'delete', color: 'white' }}
               buttonStyle={{ minHeight: '100%', backgroundColor: 'red' }}
-              onPress={()=>{deleteWork(l.name)}}
+              onPress={()=>{deleteWork(l)}}
             />
           }
       >
