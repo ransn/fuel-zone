@@ -2,54 +2,58 @@ import React, {useState, useContext, useEffect} from 'react';
 import { Button, View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Card } from "react-native-elements";
-import PriceContext from "../PriceContext";
-import firestore from '@react-native-firebase/firestore';
+import StaffStack  from "./StaffStack";
+import WorkStack from "./WorkStack";
+import CreditStack from "./CreditStack";
+import SettingsStack from "./SettingsStack";
+import DashboardScreen from "./DashboardScreen";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import PriceContext, {priceDetails} from "../PriceContext";
 
+
+const Tab = createBottomTabNavigator();
 function HomeScreen({ navigation }) {
-  const {priceDetails, updatePriceDetails} = useContext(PriceContext);
-  const ref = firestore().collection('fuelPrizeList');
-    useEffect(() => {
-      if(priceDetails.petrol == 0){
-        const subscriber = ref.orderBy('createdAt', 'desc').limit(1).onSnapshot(onResult, onError);
-        return () => subscriber();
-      } 
-    }, []);
-
-    function onResult(querySnapshot) {
-        querySnapshot.forEach(documentSnapshot => {
-            const data = documentSnapshot.data();
-            updatePriceDetails({
-                id: documentSnapshot.id,
-                createdAt: data.createdAt,
-                petrol: data.petrol,
-                diesel: data.diesel,
-                oilPacket: data.oilPacket
-            });
-        });
-    }
-
-    function onError(error) {
-        console.error(error);
-    }
-
+  
+  
+  const updatePriceDetails = (latestPriceDetails) => {
+    setPriceWrapper({...priceWrapper, priceDetails: latestPriceDetails});
+  }
+  const [priceWrapper, setPriceWrapper] = useState({
+    priceDetails: priceDetails,
+    updatePriceDetails: updatePriceDetails
+  });
+  
   return (
-    <View style={{ flex: 1 }}>
-      <Card containerStyle={{borderRadius: 10, backgroundColor: 'lightgray', borderColor: 'green'}}>
-        <Card.Title h4>Petrol: {priceDetails.petrol}</Card.Title>
-        <Card.Divider />
-        <Text style={{fontSize: 20, fontWeight:'bold'}}>Total: 3000 lts</Text>
-      </Card>
-      <Card containerStyle={{borderRadius: 10, backgroundColor: 'lavender', borderColor: 'black'}}>
-        <Card.Title h4>Diesel: {priceDetails.diesel}</Card.Title>
-        <Card.Divider />
-        <Text style={{fontSize: 20, fontWeight:'bold'}}>Total: 1500 lts</Text>
-      </Card>
-      <Card containerStyle={{borderRadius: 10, backgroundColor: 'mintcream', borderColor: 'chocolate'}}>
-        <Card.Title h4>Oil: {priceDetails.oilPacket}</Card.Title>
-        <Card.Divider />
-        <Text style={{fontSize: 20, fontWeight:'bold'}}>Count: 150 </Text>
-      </Card>
-    </View>
+    <PriceContext.Provider value={priceWrapper}>
+        <Tab.Navigator initialRouteName="Dashboard">
+          <Tab.Screen name="Dashboard" component={DashboardScreen} options={{
+            tabBarLabel: 'Home', tabBarIcon: () => (
+              <Ionicons name="home-outline" size={20} />
+            )
+          }}/>
+          <Tab.Screen name="Work" component={WorkStack} options={{ 
+            tabBarLabel: 'Assign & Start', 
+            headerShown: false,
+            tabBarIcon: () => (
+              <Ionicons name="person-outline" size={20} />
+            ) 
+          }}/>
+          <Tab.Screen name="Credit" component={CreditStack} options={{ 
+            tabBarLabel: 'Credits', 
+            headerShown: false,
+            tabBarIcon: () => (
+              <Ionicons name="card-outline" size={20} />
+            ) 
+          }}/>
+          <Tab.Screen name="SettingsStack" component={SettingsStack} options={{ 
+            tabBarLabel: 'Settings', 
+            headerShown: false, 
+            tabBarIcon: () => (
+              <Ionicons name="settings-outline" size={20} />
+            ) 
+          }}/>
+        </Tab.Navigator>
+      </PriceContext.Provider>
   );
 }
 
