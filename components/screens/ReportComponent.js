@@ -15,18 +15,20 @@ function ReportComponent(props){
     const {salesTotal, returnsTotal,
             difference 
           } = report;
+    const petrolLiters = petrolClosing - petrolOpening;
+    const dieselLiters = dieselClosing - dieselOpening;
     return(
         <Card>
             <Card.Title>Summary</Card.Title>
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Petrol({petrolPrice})</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Liters: {petrolClosing - petrolOpening}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Liters: {petrolLiters && petrolLiters.toFixed(2)}</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {petrolAmount && petrolAmount.toFixed(2)}</Text>
             </View>
             <Divider />
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Diesel({dieselPrice})</Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12}}>Liters: {dieselClosing - dieselOpening}</Text>
+              <Text style={{ flex:2, padding: 5, fontSize:12}}>Liters: {dieselLiters && dieselLiters.toFixed(2)}</Text>
               <Text style={{ flex:2, padding: 5, fontSize:12}}>Amt: {dieselAmount && dieselAmount.toFixed(2)}</Text>
             </View>
             <Divider />
@@ -95,7 +97,15 @@ function ReportComponent(props){
             <View style={{flex:1, flexDirection:'row'}}>
               <Text style={{ flex:2, padding: 5, fontSize:12}}></Text>
               <Text style={{ flex:2, padding: 5, fontSize:12, fontWeight:'bold'}}></Text>
-              <Text style={{ flex:2, padding: 5, fontSize:12, color: 'red', fontWeight:'bold'}}>Diff: {difference && difference.toFixed(2)}</Text>
+              {
+                difference > 0 &&
+                <Text style={{ flex:2, padding: 5, fontSize:12, color: 'red', fontWeight:'bold'}}>Shortage: {difference && difference.toFixed(2)}</Text>
+              }
+              {
+                difference < 0 &&
+                <Text style={{ flex:2, padding: 5, fontSize:12, color: 'green', fontWeight:'bold'}}>Excess: {difference && difference.toFixed(2)}</Text>
+              }
+              
             </View>           
           </Card>        
     )

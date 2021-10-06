@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Platform, KeyboardAvoidingView, ScrollView, View, Text, TouchableOpacity, Alert } from 'react-native';
 import { StackActions } from '@react-navigation/native';
 import { Card, Input, Overlay, Button } from 'react-native-elements';
 import Logo from '../../Logo';
@@ -153,11 +153,13 @@ function LoginScreen({navigation }) {
     console.error(error);
   }
   return (
-    <View style={{flex: 1, paddingTop:100, justifyContent: 'center'}}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1, paddingTop:40, justifyContent: 'center'}}>
+    
       <View style={{flex:0.5, alignItems: 'center'}}>
         <Logo />
       </View>
       <View style={{flex:0.5}}>
+        
           <Card containerStyle={{borderRadius: 10, backgroundColor: 'mintcream', borderColor: 'chocolate'}}>
               <Card.Title>Enter 4 digit PIN</Card.Title>
               <Card.Divider />
@@ -175,6 +177,7 @@ function LoginScreen({navigation }) {
                 <Text style={{fontWeight: 'bold'}}>Sign Up </Text>
               </TouchableOpacity>
           </Card>
+        
           <Overlay overlayStyle={{height: 360, width: 350, borderRadius: 10}} 
             visible={overlayVisible} 
             onBackdropPress={toggleOverlayBackdrop} 
@@ -217,7 +220,8 @@ function LoginScreen({navigation }) {
             </View>
           </Overlay>
       </View>
-    </View>
+    </KeyboardAvoidingView>
+    
     
   );
 }

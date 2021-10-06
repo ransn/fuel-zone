@@ -9,7 +9,7 @@ function AssignStaffOverlay(props, { navigation }) {
   const [assignOverlayVisible, setAssignOverlayVisible] = useState(false);
   const loadStaffs = () => {
     var list = [];
-    ref.get().then(snapshot => {
+    ref.where("status", "==", 'A').get().then(snapshot => {
       snapshot.docs.forEach((document) => {
         var data = document.data();
         list.push({
