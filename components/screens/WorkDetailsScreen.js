@@ -147,15 +147,18 @@ function WorkDetailsScreen({ route, navigation }) {
           style: "cancel"
         },
         { text: "OK", onPress: () => {
-            let updatedWork = work;
-            updatedWork.status = 'I';
-            setWork(updatedWork);
-            createReport();
-            workRef.doc(work.id).set(updatedWork).then(()=>{
-              navigation.navigate({
-                name: 'WorkList'
-              })
-            });
+            let validReport = createReport();
+            if(validReport){
+              let updatedWork = work;
+              updatedWork.status = 'I';
+              setWork(updatedWork);
+              let validReport = createReport();
+              workRef.doc(work.id).set(updatedWork).then(()=>{
+                navigation.navigate({
+                  name: 'WorkList'
+                })
+              });
+            }
           } 
         }
       ]
@@ -271,7 +274,7 @@ function WorkDetailsScreen({ route, navigation }) {
 
     if(work.id){
       fuelDetailsRef.doc(work.id).set(updatedFuelDetails).then(()=>{
-        console.log('Preview - Fuel details updated');
+        console.log('Fuel details updated');
       });
     }else{
       console.log('work id is empty');
@@ -327,18 +330,49 @@ function WorkDetailsScreen({ route, navigation }) {
   }, [calculatedReport])
 
   const createReport = () => {
-    const salesTotal = calculateSalesTotal();
-    const returnsTotal = calculateReturnsTotal();
-    const difference = salesTotal - returnsTotal;
-    setCalculatedReport({...calculatedReport,
-      fuelDetails: fuelDetails,
-      oilDetails: oilDetails,
-      safeDropDetails: safeDropDetails,
-      lastDropDetails: lastDropDetails,
-      salesTotal: salesTotal,
-      returnsTotal: returnsTotal,
-      difference: difference
-    });
+    let validReport = false;
+    if(Number(fuelDetails.petrolClosing) <= Number(fuelDetails.petrolOpening)){
+      validReport = false;
+      Alert.alert(
+        "Invalid Petrol Closing",
+        "Closing should be > than : "+ fuelDetails.petrolOpening,
+        [
+          {
+            text: "OK",
+            onPress: () => console.log("Ok Pressed"),
+            style: "cancel"
+          }
+        ]
+      );
+    } else if(Number(fuelDetails.dieselClosing) <= Number(fuelDetails.dieselOpening)){
+      validReport = false;
+      Alert.alert(
+        "Invalid Diesel Closing",
+        "Closing should be > than : "+ fuelDetails.dieselOpening,
+        [
+          {
+            text: "OK",
+            onPress: () => console.log("Ok Pressed"),
+            style: "cancel"
+          }
+        ]
+      );
+    } else{
+      validReport = true;
+      const salesTotal = calculateSalesTotal();
+      const returnsTotal = calculateReturnsTotal();
+      const difference = salesTotal - returnsTotal;
+      setCalculatedReport({...calculatedReport,
+        fuelDetails: fuelDetails,
+        oilDetails: oilDetails,
+        safeDropDetails: safeDropDetails,
+        lastDropDetails: lastDropDetails,
+        salesTotal: salesTotal,
+        returnsTotal: returnsTotal,
+        difference: difference
+      });
+    }
+    return validReport;
   }
 
   return (
@@ -539,25 +573,25 @@ function WorkDetailsScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   labelText: {
     flex: 1, 
-    padding: 10, 
+    padding: 8, 
     fontSize:15
   },
   valueText: {
     flex: 1, 
-    padding: 10, 
+    padding: 8, 
     fontSize:15,
     fontWeight: 'bold'
   },
   valueTextGreen: {
     flex:1, 
-    padding: 10, 
+    padding: 8, 
     fontSize:15, 
     fontWeight:'bold', 
     color: 'green'
   },
   pumpOperatorLabel: {
     flex:0.8, 
-    padding:10, 
+    padding:8, 
     fontSize:15
   }
 })

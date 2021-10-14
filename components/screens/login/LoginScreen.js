@@ -15,31 +15,13 @@ function LoginScreen({navigation }) {
     code:Number(0),
     role:'admin'
   });
-  const [newUser, setNewUser] = useState(false);
-  const [overlayVisible, setOverlayVisible] = useState(false);
   const [forgotOverlayVisible, setForgotOverlayVisible] = useState(false);
-
-  const toggleOverlay = () => {
-    setOverlayVisible(!overlayVisible);
-  };
-  const toggleOverlayBackdrop = () => {
-    toggleOverlay();
-  }
 
   const toggleForgotOverlay = () => {
     setForgotOverlayVisible(!forgotOverlayVisible);
   };
   const toggleForgotOverlayBackdrop = () => {
     toggleForgotOverlay();
-  }
-
-  const onCreateUser = () => {
-    setNewUser(true);
-    toggleOverlay();
-  }
-
-  const createUser = () => {
-    usersRef.where("code", "==", user.code ).get().then((snapshot)=>{onResult(snapshot)});
   }
 
   const updateUser = () => {
@@ -61,7 +43,7 @@ function LoginScreen({navigation }) {
           var id = documentSnapshot.id;
           console.log(id);
           usersRef.doc(id).update({code: user.code}).then(()=>{
-            console.log('PIN set successful');
+            console.log('PIN set successfull');
             toggleForgotOverlay();
             Alert.alert(
               "Success",
@@ -80,7 +62,6 @@ function LoginScreen({navigation }) {
   }
 
   const validateUser = (text) => {
-    setNewUser(false);
     if(text.length == 4){
       console.log('code= '+text);
       usersRef.where("code", "==", text ).get().then((snapshot)=>{onResult(snapshot)});
@@ -93,29 +74,11 @@ function LoginScreen({navigation }) {
       list.push(data);
     });
     if(list.length == 1){
-      if(newUser){
-        Alert.alert(
-          "PIN Already Used",
-          "Please enter different PIN",
-          [
-            {
-              text: "OK",
-              onPress: () => {
-                console.log('OK pressed'); 
-              },
-              style: "cancel"
-            }
-          ]
-        );
-      }else{
-        navigation.dispatch(
+      navigation.dispatch(
           StackActions.replace('Home')
-        );
-      }
-      
+      );
     }else{
-      if(!newUser){
-        Alert.alert(
+      Alert.alert(
           "Invalid PIN",
           "Please enter 4 digit valid PIN",
           [
@@ -129,37 +92,19 @@ function LoginScreen({navigation }) {
               style: "cancel"
             }
           ]
-        );
-      }else {
-        usersRef.add(user).then(() => {
-          console.log('User created');
-          toggleOverlay();
-          Alert.alert(
-            "Success",
-            "Login with PIN",
-            [
-              {
-                text: "OK",
-                style: "cancel"
-              }
-            ]
-          );
-        })
-      }
+      );
+      
     }
   }
-
   function onError(error) {
     console.error(error);
   }
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1, paddingTop:40, justifyContent: 'center'}}>
-    
       <View style={{flex:0.5, alignItems: 'center'}}>
         <Logo />
       </View>
-      <View style={{flex:0.5}}>
-        
+      <View style={{flex:1.5}}>
           <Card containerStyle={{borderRadius: 10, backgroundColor: 'mintcream', borderColor: 'chocolate'}}>
               <Card.Title>Enter 4 digit PIN</Card.Title>
               <Card.Divider />
@@ -173,34 +118,14 @@ function LoginScreen({navigation }) {
               <TouchableOpacity style={styles.button} onPress={toggleForgotOverlay}>
                 <Text style={{fontWeight: 'bold'}}>Forgot Pin ? </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.button} onPress={onCreateUser}>
+              <TouchableOpacity style={styles.button} onPress={()=>{
+                    navigation.navigate('SignUp')
+                  }}>
                 <Text style={{fontWeight: 'bold'}}>Sign Up </Text>
               </TouchableOpacity>
           </Card>
-        
-          <Overlay overlayStyle={{height: 360, width: 350, borderRadius: 10}} 
-            visible={overlayVisible} 
-            onBackdropPress={toggleOverlayBackdrop} 
-            supportedOrientations={['portrait', 'landscape']}
-          >
-            <Text style={{ padding: 10, fontSize:18, fontWeight:'bold' }}>Sign Up: </Text>
-            <View style={{flex:1}}>
-              <Input label='Name'
-                      onChangeText={text => setUser({...user, name: text})} />
-
-              <Input keyboardType='numeric'
-                      maxLength={10} 
-                      label='Mobile' 
-                      onChangeText={number => setUser({...user, mobileNumber: number})} />
-
-              <Input keyboardType='numeric' 
-                      maxLength={4}
-                      label='New PIN (4 digit)' 
-                      onChangeText={pin => setUser({...user, code: pin})} />
-              <Button title='Sing Up' onPress={createUser}/>
-            </View>
-          </Overlay>
-          <Overlay overlayStyle={{height: 360, width: 350, borderRadius: 10}} 
+          
+          <Overlay overlayStyle={{height: 300, width: 350, borderRadius: 10}} 
             visible={forgotOverlayVisible} 
             onBackdropPress={toggleForgotOverlayBackdrop} 
             supportedOrientations={['portrait', 'landscape']}
@@ -216,13 +141,12 @@ function LoginScreen({navigation }) {
                       maxLength={4}
                       label='New PIN (4 digit)' 
                       onChangeText={pin => setUser({...user, code: pin})} />
-              <Button title='Set New PIN' onPress={updateUser}/>
+              <Button title='Set New PIN' disabled={user.mobileNumber.length != 10 || user.code.length != 4} onPress={updateUser}/>
             </View>
           </Overlay>
       </View>
-    </KeyboardAvoidingView>
-    
-    
+      </KeyboardAvoidingView>
+      
   );
 }
 
