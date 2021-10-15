@@ -112,23 +112,20 @@ function StaffScreen({ navigation }) {
       </Overlay>
   {
     staffs.map((l, i) => (
-      <ListItem.Swipeable key={i} bottomDivider
-          rightContent={
-            <Button
-              title="Inactive"
-              icon={{ name: 'delete', color: 'white' }}
-              buttonStyle={{ minHeight: '100%', backgroundColor: 'red' }}
-              onPress={()=>{updateStatus(l)}}
-            />
-          }
-      >
+      <ListItem key={i} bottomDivider>
         <Avatar rounded source={require('../../images/user.png')} />
         <ListItem.Content>
           <ListItem.Title>{l.name}</ListItem.Title>
           <ListItem.Subtitle>{l.mobileNumber}</ListItem.Subtitle>
         </ListItem.Content>
-        <Button icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} type='clear' onPress={()=>{onEditStaff(l)}}/>
-      </ListItem.Swipeable>
+        <Button 
+              icon={{name: "create-outline", type:'ionicon', size: 20, color: "dodgerblue"}} 
+              type='clear' onPress={()=>{onEditStaff(l)}}/>
+        <Button
+              icon={{ name: 'trash-outline', type:'ionicon', size: 20, color: 'red' }}
+              type= 'clear' onPress={()=>{updateStatus(l)}}
+        />
+      </ListItem>
     ))
   }
   </ScrollView>

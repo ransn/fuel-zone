@@ -64,6 +64,17 @@ function WorkDetailsScreen({ route, navigation }) {
     }
   }, []);
 
+  React.useLayoutEffect(() => {
+    if(route.params?.workItem){
+      navigation.setOptions({
+        headerRight: () => (
+          <Button icon={{name: "trash-outline", type:'ionicon', size: 20, color: "red"}} type='clear' onPress={()=>deleteWork(route.params.workItem.id)} />
+        ),
+      });
+    }
+    
+  }, [navigation]);
+
   const [fuelDetails, setFuelDetails] = useState({
     petrolOpening: Number(0),
     petrolClosing: Number(0),
@@ -115,6 +126,28 @@ function WorkDetailsScreen({ route, navigation }) {
   const OPENING_READING = 'Opening';
   const CLOSING_READING = 'Closing';
   const UGT_READING = 'Ugt'
+
+  const deleteWork = (workId) => {
+    Alert.alert(
+      "Delete Work",
+      "Are you sure to delete this work ?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => {
+            workRef.doc(workId).update({status: 'D', updatedAt: firestore.FieldValue.serverTimestamp()}).then(()=>{
+              console.log('Work status updated to D');
+              navigation.navigate({
+                  name: 'WorkList'
+              })
+            })
+        } }
+      ]
+    );
+  }
 
   const startWork = () => {
     let updatedWork = work;

@@ -48,25 +48,6 @@ function WorkScreen({ navigation, route }) {
     console.error(error);
   }
 
-  const deleteWork = (work) => {
-    Alert.alert(
-      "Delete Work",
-      "Are you sure to delete this work ?",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        { text: "OK", onPress: () => {
-            workRef.doc(work.id).update({status: 'D', updatedAt: firestore.FieldValue.serverTimestamp()}).then(()=>{
-              console.log('Work status updated to D');
-            })
-        } }
-      ]
-    );
-  }
-
   const navigateTo = (work) => {
     if(work.status == "I"){
       navigation.navigate('WorkReport', {workId: work.id})
@@ -97,20 +78,10 @@ function WorkScreen({ navigation, route }) {
             onRefresh={onRefresh}
           />
         }
-      
     >
   {
     workList.map((l, i) => (
-      <ListItem.Swipeable key={i} bottomDivider onPress={() => navigateTo(l)}
-          rightContent={
-            <Button
-              title="Delete"
-              icon={{ name: 'delete', color: 'white' }}
-              buttonStyle={{ minHeight: '100%', backgroundColor: 'red' }}
-              onPress={()=>{deleteWork(l)}}
-            />
-          }
-      >
+      <ListItem key={i} bottomDivider onPress={() => navigateTo(l)}>
         <Avatar rounded source={require('../../images/pump.png')} />
         <ListItem.Content>
           <ListItem.Title>{l.name}</ListItem.Title>
@@ -123,7 +94,7 @@ function WorkScreen({ navigation, route }) {
         </ListItem.Content>
         <Badge status={badgeStatus[l.status]} value={l.status}/>
         <ListItem.Chevron />
-      </ListItem.Swipeable>
+      </ListItem>
     ))
   }
   
